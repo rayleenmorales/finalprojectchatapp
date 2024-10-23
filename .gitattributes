@@ -1,0 +1,6 @@
+# Handle all text files with LF
+* text=auto
+
+# Force specific files to have LF line endings
+*.json text eol=lf
+*.fxml text eol=lf

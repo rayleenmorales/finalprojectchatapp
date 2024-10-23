@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.LoginPageController">
+   <children>
+      <Pane prefHeight="450.0" prefWidth="222.0" />
+      <Pane layoutX="222.0" prefHeight="450.0" prefWidth="428.0">
+         <children>
+            <Button fx:id="signUpBtn" layoutX="206.0" layoutY="302.0" mnemonicParsing="false" onAction="#handleSignUpButton" prefHeight="25.0" prefWidth="144.0" text="Sign-Up" />
+            <Button fx:id="loginBtn" layoutX="43.0" layoutY="302.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="25.0" prefWidth="144.0" text="Log-In" />
+            <TextField fx:id="emailField" layoutX="44.0" layoutY="106.0" prefHeight="38.0" prefWidth="305.0" promptText="Type First Name...">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Label layoutX="44.0" layoutY="66.0" prefHeight="32.0" prefWidth="199.0" text="Email">
+               <font>
+                  <Font name="Arial Bold" size="24.0" />
+               </font>
+            </Label>
+            <TextField fx:id="passwordField" layoutX="44.0" layoutY="207.0" prefHeight="38.0" prefWidth="305.0" promptText="Type Password...">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Label layoutX="44.0" layoutY="167.0" prefHeight="32.0" prefWidth="199.0" text="Password">
+               <font>
+                  <Font name="Arial Bold" size="24.0" />
+               </font>
+            </Label>
+            <Label fx:id="messageLabel" layoutX="44.0" layoutY="252.0" prefHeight="17.0" prefWidth="199.0" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

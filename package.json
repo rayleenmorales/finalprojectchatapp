@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "finalproject": "file:",
+    "firebase": "^11.0.0",
+    "firebase-admin": "^12.6.0"
+  },
+  "name": "finalproject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

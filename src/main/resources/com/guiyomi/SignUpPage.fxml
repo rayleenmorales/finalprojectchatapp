@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.SignUpPageController">
+   <children>
+      <Pane prefHeight="450.0" prefWidth="222.0" />
+      <Pane layoutX="222.0" prefHeight="450.0" prefWidth="428.0">
+         <children>
+            <Button fx:id="chooseProfileBtn" layoutX="46.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleChooseProfileButton" prefHeight="25.0" prefWidth="144.0" text="Choose Profile Photo" />
+            <Button fx:id="loginBtn" layoutX="198.0" layoutY="385.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="25.0" prefWidth="144.0" text="Log-In" />
+            <TextField fx:id="firstNameField" layoutX="46.0" layoutY="66.0" prefHeight="17.0" prefWidth="183.0" promptText="Type First Name..." />
+            <Label layoutX="46.0" layoutY="41.0" prefHeight="25.0" prefWidth="199.0" text="First Name">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="lastNameField" layoutX="46.0" layoutY="124.0" prefHeight="17.0" prefWidth="183.0" promptText="Type First Name..." />
+            <Label layoutX="46.0" layoutY="99.0" prefHeight="25.0" prefWidth="199.0" text="Last Name">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="emailField" layoutX="46.0" layoutY="180.0" prefHeight="17.0" prefWidth="183.0" promptText="Type First Name..." />
+            <Label layoutX="46.0" layoutY="155.0" prefHeight="25.0" prefWidth="199.0" text="Email">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="passwordField" layoutX="46.0" layoutY="238.0" prefHeight="17.0" prefWidth="183.0" promptText="Type First Name..." />
+            <Label layoutX="46.0" layoutY="213.0" prefHeight="25.0" prefWidth="199.0" text="Password">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="confirmPasswordField" layoutX="46.0" layoutY="296.0" prefHeight="17.0" prefWidth="183.0" promptText="Type First Name..." />
+            <Label layoutX="46.0" layoutY="271.0" prefHeight="25.0" prefWidth="199.0" text="Confirm Password">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="messageLabel" layoutX="46.0" layoutY="328.0" prefHeight="17.0" prefWidth="255.0" />
+            <Label fx:id="messageLabel1" layoutX="46.0" layoutY="389.0" prefHeight="17.0" prefWidth="183.0" text="Already have an account?" />
+            <Button fx:id="signUpBtn" layoutX="214.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleSignUpButton" prefHeight="25.0" prefWidth="144.0" text="Sign-Up" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
