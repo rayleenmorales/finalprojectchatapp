@@ -12,8 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import java.util.Map;
 
-import java.io.IOException;
 
 public class SignUpPageController {
     @FXML
@@ -54,6 +54,8 @@ public class SignUpPageController {
         String password = passwordField.getText();
         String confirmedPassword = confirmPasswordField.getText();
 
+        System.out.println(profilePhoto);
+
         // Validating inputs before sign-up
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty() || profilePhoto == null) {
             messageLabel.setText("Please fill in all fields.");
@@ -71,9 +73,26 @@ public class SignUpPageController {
         }
 
         try {
-            authService.signUp(email, password);
-        } catch (IOException e) {
+            // Sign up the user
+            Map<String, String> authData = authService.signUp(email, password);
+
+            String uid = authData.get("uid");
+            String idToken = authData.get("idToken");
+    
+            // Upload the profile photo and get the download URL
+            String profilePhotoUrl = authService.uploadProfilePhoto(profilePhoto, idToken);
+    
+            if (profilePhotoUrl != null) {
+                // Save user info to Firestore with profile photo URL
+                authService.saveUserInfo(uid, firstName, lastName, profilePhotoUrl, idToken);
+                messageLabel.setText("User signed up successfully!");
+            } else {
+                messageLabel.setText("Failed to upload profile photo.");
+            }
+    
+        } catch (Exception e) {
             e.printStackTrace();
+            messageLabel.setText("Sign up failed.");
         }
     }
 
