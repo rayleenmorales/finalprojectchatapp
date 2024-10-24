@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.ChatMainController">
    <children>
       <AnchorPane prefHeight="800.0" prefWidth="1300.0">
          <children>
@@ -25,12 +25,12 @@
                <children>
                   <Pane prefHeight="800.0" prefWidth="101.0" styleClass="Mainchat-pane" stylesheets="@stylesheet.css">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="101.0">
+                        <VBox fx:id="userContainer" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="101.0">
                            <children>
                               <Separator prefHeight="16.0" prefWidth="101.0" />
-                              <Circle radius="45.0" stroke="#ffeaea" strokeType="INSIDE" strokeWidth="0.0" />
+                              <Circle fx:id="currentUserProfile" radius="45.0" stroke="#ffeaea" strokeType="INSIDE" strokeWidth="0.0" />
                               <Separator prefHeight="28.0" prefWidth="102.0" />
-                              <Label text="Nickname">
+                              <Label fx:id="currentUserLabel" text="Nickname">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -55,6 +55,8 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <Separator prefHeight="48.0" prefWidth="101.0" />
+                              <Button fx:id="logOutBtn" mnemonicParsing="false" onAction="#handleLogOutButton" text="Log Out" />
                            </children>
                         </VBox>
                      </children></Pane>
@@ -65,7 +67,7 @@
                               <Pane prefHeight="69.0" prefWidth="310.0">
                                  <children>
                                     <TextField id="customTextField" layoutX="66.0" layoutY="16.0" prefHeight="46.0" prefWidth="197.0" promptText="Looking to Ka-Talk?" styleClass="minimal-textfield" stylesheets="@stylesheet.css" />
-                                    <Button layoutX="13.0" layoutY="16.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="43.0">
+                                    <Button layoutX="12.0" layoutY="16.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="43.0">
                                        <graphic>
                                           <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -98,12 +100,12 @@
                   </Pane>
                   <Pane prefHeight="800.0" prefWidth="558.0" styleClass="Mainchat-pane" stylesheets="@stylesheet.css">
                      <children>
-                        <VBox prefHeight="800.0" prefWidth="558.0">
+                        <VBox fx:id="messageContainer" prefHeight="800.0" prefWidth="558.0">
                            <children>
                               <Pane prefHeight="79.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
                                  <children>
-                                    <Circle fill="#615ed1" layoutX="40.0" layoutY="40.0" radius="26.0" stroke="#dcc1c1" strokeType="INSIDE" strokeWidth="0.0" />
-                                    <Label layoutX="83.0" layoutY="14.0" text="Name Placeholder">
+                                    <Circle fx:id="selectedUserProfile" fill="#615ed1" layoutX="40.0" layoutY="40.0" radius="26.0" stroke="#dcc1c1" strokeType="INSIDE" strokeWidth="0.0" />
+                                    <Label fx:id="selectedUserLabel" layoutX="83.0" layoutY="14.0" text="Name Placeholder">
                                        <font>
                                           <Font name="Arial Rounded MT Bold" size="24.0" />
                                        </font>
@@ -117,7 +119,7 @@
                               </Pane>
                               <Pane prefHeight="661.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
                                  <children>
-                                    <ScrollPane prefHeight="661.0" prefWidth="558.0">
+                                    <ScrollPane fx:id="messageContainer2" prefHeight="661.0" prefWidth="558.0">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
                                       </content>
@@ -147,7 +149,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <TextField prefHeight="50.0" prefWidth="400.0" styleClass="minimal-textfield" stylesheets="@stylesheet.css" />
+                                          <TextField fx:id="messageField" prefHeight="50.0" prefWidth="400.0" styleClass="minimal-textfield" stylesheets="@stylesheet.css" />
                                           <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="45.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
                                              <graphic>
                                                 <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -170,8 +172,8 @@
                            <children>
                               <Pane prefHeight="264.0" prefWidth="359.0">
                                  <children>
-                                    <Circle fill="#7b6cef" layoutX="180.0" layoutY="102.0" radius="88.0" stroke="WHITE" strokeType="INSIDE" />
-                                    <Label layoutX="45.0" layoutY="197.0" text="Name Placeholder">
+                                    <Circle fx:id="selectedUserProfile2" fill="#7b6cef" layoutX="180.0" layoutY="102.0" radius="88.0" stroke="WHITE" strokeType="INSIDE" />
+                                    <Label fx:id="selectedUserLabel2" layoutX="45.0" layoutY="197.0" text="Name Placeholder">
                                        <font>
                                           <Font name="Arial Rounded MT Bold" size="30.0" />
                                        </font>

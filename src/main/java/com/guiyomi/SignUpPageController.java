@@ -12,8 +12,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -111,6 +115,35 @@ public class SignUpPageController {
             } else {
                 messageLabel.setText("Failed to upload profile photo.");
             }
+
+        Dialog<ButtonType> proceedToLogin = new Dialog<>();
+            proceedToLogin.setTitle("Confirmation");
+            DialogPane dPane = new DialogPane();
+            VBox content = new VBox(10);
+            content.getChildren().add(new Label("Would you like to proceed to the Log-in Page?"));
+            dPane.setContent(content);
+            dPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+            dPane.setGraphic(null);
+            proceedToLogin.setDialogPane(dPane);
+
+            proceedToLogin.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    System.out.println("OK button clicked");
+                    try{
+                        Parent chatMainParent = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
+                        Scene chatMainScene = new Scene(chatMainParent);
+
+                        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+                        window.setScene(chatMainScene);
+                        window.show();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("Cancel button clicked");
+                }
+            });
     
         } catch (Exception e) {
             e.printStackTrace();

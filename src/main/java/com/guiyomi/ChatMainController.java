@@ -1,5 +1,7 @@
 package com.guiyomi;
 
+import javafx.application.Platform;
+
 // import java.io.BufferedReader;
 // import java.io.InputStreamReader;
 // import java.io.OutputStream;
@@ -20,11 +22,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 public class ChatMainController {
@@ -35,19 +41,32 @@ public class ChatMainController {
     private VBox messageContainer;
 
     @FXML
+    private ScrollPane messageContainer2;
+
+    @FXML
     private TextField messageField; 
 
     @FXML
-    private ImageView currentUserProfile;
+    private Circle currentUserProfile;
 
     @FXML 
-    private ImageView selectedUserProfile;
+    private Circle selectedUserProfile;
+
+    @FXML 
+    private Circle selectedUserProfile2;
 
     @FXML
     private Label currentUserLabel;
 
     @FXML 
     private Label selectedUserLabel;
+
+    @FXML 
+    private Label selectedUserLabel2;
+
+    @FXML
+    private Button logOutBtn;
+
 
     FirebaseService firebaseService = new FirebaseService();
 
@@ -65,7 +84,7 @@ public class ChatMainController {
             if (photoUrl != null && !photoUrl.isEmpty()) {
                 try {
                     Image profilePhoto = new Image(photoUrl);
-                    currentUserProfile.setImage(profilePhoto);
+                    Platform.runLater(() -> currentUserProfile.setFill(new ImagePattern(profilePhoto)));
                 } catch (Exception e) {
                     System.out.println("Error loading profile photo: " + e.getMessage());
                 }
@@ -98,17 +117,17 @@ public class ChatMainController {
         // End the session and load the login page
         UserSession.endSession();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource("LogInPage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
 
-    @FXML
-    public void handleSendButton(ActionEvent event) throws Exception {
+    // @FXML
+    // public void handleSendButton(ActionEvent event) throws Exception {
 
-    }
+    // }
     
     
 
