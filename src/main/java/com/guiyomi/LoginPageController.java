@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import java.util.Map;
 
 public class LoginPageController {
     @FXML
@@ -41,13 +42,17 @@ public class LoginPageController {
         String password = passwordField.getText();
 
         try {
-            int responseCode = authService.signIn(email, password);
+            Map<String, String> authData = authService.signIn(email, password);
 
-            System.out.println(responseCode);
-
-            if (responseCode != 200) {
+            if (authData == null) {
                 messageLabel.setText("Invalid email/password.");
             } else {
+                String uid = authData.get("uid");
+                String idToken = authData.get("idToken");
+
+                authService.fetchUserDetails(uid, idToken);  // This will also initialize the session
+                UserSession.startSession(uid, UserSession.getUserName(), UserSession.getUserPhotoUrl(), idToken);
+
                 // If login is successful, load ChatMain.fxml
                 Parent chatMainParent = FXMLLoader.load(getClass().getResource("ChatMain.fxml"));
                 Scene chatMainScene = new Scene(chatMainParent);
