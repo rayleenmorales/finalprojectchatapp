@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -23,12 +24,15 @@ public class LoginPageController {
     @FXML
     private Label messageLabel;
 
+    @FXML
+    private Button homeBtn;
+
     private FirebaseService authService = new FirebaseService();
 
     @FXML
     public void handleSignUpButton(ActionEvent event) throws Exception {
         // If sign up button pressed, show sign up page
-        Parent chatMainParent = FXMLLoader.load(getClass().getResource("SING UP PAGE.fxml"));
+        Parent chatMainParent = FXMLLoader.load(getClass().getResource("GET STARTED.fxml"));
         Scene chatMainScene = new Scene(chatMainParent);
 
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -53,8 +57,8 @@ public class LoginPageController {
                 authService.fetchUserDetails(uid, idToken);  // This will also initialize the session
                 UserSession.startSession(uid, UserSession.getUserName(), UserSession.getUserPhotoUrl(), idToken);
 
-                // If login is successful, load ChatMain.fxml
-                Parent chatMainParent = FXMLLoader.load(getClass().getResource("ChatMain.fxml"));
+                // If login is successful, load MainChat.fxml
+                Parent chatMainParent = FXMLLoader.load(getClass().getResource("MainChat.fxml"));
                 Scene chatMainScene = new Scene(chatMainParent);
 
                 // Get the stage information

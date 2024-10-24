@@ -43,6 +43,9 @@ public class SignUpPageController {
     @FXML
     private Button loginBtn;
 
+    @FXML
+    private Button homeBtn;
+
     private FirebaseService authService = new FirebaseService();
     private File profilePhoto;
 
