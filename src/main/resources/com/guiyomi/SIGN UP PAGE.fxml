@@ -10,52 +10,52 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.SignUpPageController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.SignUpPageController">
    <children>
       <Pane prefHeight="174.0" prefWidth="400.0">
          <children>
             <ImageView fitHeight="174.0" fitWidth="400.0" layoutX="-1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/SIGN-UP PAGE.png" />
+                  <Image url="@images/SIGNUPPAGE1.png" />
                </image>
             </ImageView>
          </children>
       </Pane>
       <Pane layoutY="141.0" prefHeight="459.0" prefWidth="400.0" styleClass="rounded-pane" stylesheets="@stylesheet.css">
          <children>
-            <Label layoutX="36.0" layoutY="81.0" text="FIRST NAME">
+            <Label layoutX="36.0" layoutY="76.0" text="FIRST NAME">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField fx:id="firstNameField" layoutX="36.0" layoutY="98.0" prefHeight="39.0" prefWidth="153.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <TextField fx:id="firstNameField" layoutX="36.0" layoutY="98.0" prefHeight="39.0" prefWidth="157.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
             <Label layoutX="38.0" layoutY="157.0" text="EMAIL">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField fx:id="emailField" layoutX="36.0" layoutY="176.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
-            <Button fx:id="signUpBtn" layoutX="143.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleSignUpButton" prefHeight="39.0" prefWidth="121.0" styleClass="button1" text="SIGN UP">
+            <TextField fx:id="emailField" layoutX="36.0" layoutY="176.0" prefHeight="39.0" prefWidth="323.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
+            <Button fx:id="signUpBtn" layoutX="259.0" layoutY="388.0" mnemonicParsing="false" onAction="#handleSignUpButton" prefHeight="39.0" prefWidth="121.0" styleClass="buttonSUBMIT" text="SIGN UP">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <TextField fx:id="passwordField" layoutX="36.0" layoutY="253.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <TextField fx:id="passwordField" layoutX="36.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
             <Label layoutX="38.0" layoutY="234.0" text="PASSWORD">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label layoutX="214.0" layoutY="81.0" text="LAST NAME">
+            <Label layoutX="204.0" layoutY="76.0" text="LAST NAME">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField fx:id="lastNameField" layoutX="214.0" layoutY="98.0" prefHeight="39.0" prefWidth="153.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
-            <TextField fx:id="confirmPasswordField" layoutX="35.0" layoutY="333.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
-            <Label layoutX="35.0" layoutY="314.0" text="RE-ENTER PASSWORD">
+            <TextField fx:id="lastNameField" layoutX="201.0" layoutY="98.0" prefHeight="39.0" prefWidth="157.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
+            <TextField fx:id="confirmPasswordField" layoutX="201.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
+            <Label layoutX="201.0" layoutY="234.0" text="RE-ENTER PASSWORD">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
@@ -65,9 +65,12 @@
                   <Font size="59.0" url="@bignoodletitling/big_noodle_titling_oblique.ttf" />
                </font>
             </Label>
-            <Button fx:id="homeBtn" layoutX="20.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="30.0" prefWidth="30.0" />
-            <Label fx:id="messageLabel" layoutX="42.0" layoutY="379.0" prefHeight="17.0" prefWidth="320.0" />
-            <Button fx:id="chooseProfileBtn" layoutX="58.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleChooseProfileButton" prefHeight="30.0" prefWidth="65.0" text="Choose Pic">
+            <Button fx:id="homeBtn" layoutX="20.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="30.0" prefWidth="30.0" styleClass="buttonBACK" text="&lt;" />
+            <Label fx:id="messageLabel" layoutX="201.0" layoutY="323.0" prefHeight="20.0" prefWidth="157.0" textFill="#6f6f6f">
+               <font>
+                  <Font name="System Italic" size="14.0" />
+               </font></Label>
+            <Button fx:id="chooseProfileBtn" layoutX="34.0" layoutY="309.0" minHeight="38.0" mnemonicParsing="false" onAction="#handleChooseProfileButton" prefHeight="38.0" prefWidth="98.0" styleClass="buttonPHOTO" text="CHOOSE PHOTO">
                <font>
                   <Font size="10.0" />
                </font>

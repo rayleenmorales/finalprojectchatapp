@@ -10,15 +10,15 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.LoginPageController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.LoginPageController">
    <children>
       <Pane prefHeight="174.0" prefWidth="400.0" styleClass="Media-pane" stylesheets="@stylesheet.css" />
       <ImageView fitHeight="174.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/KATALKS LOGIN2.png" />
+            <Image url="@images/LOGINPAGE1.png" />
          </image>
       </ImageView>
-      <Pane layoutY="175.0" prefHeight="425.0" prefWidth="400.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
+      <Pane layoutY="142.0" prefHeight="458.0" prefWidth="400.0" styleClass="rounded-pane" stylesheets="@stylesheet.css">
          <children>
             <Label layoutX="136.0" layoutY="25.0" text="LOGIN">
                <font>
@@ -27,24 +27,24 @@
             </Label>
             <Label layoutX="52.0" layoutY="137.0" text="EMAIL">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <TextField fx:id="emailField" layoutX="50.0" layoutY="163.0" prefHeight="39.0" prefWidth="308.0" stylesheets="@stylesheet.css" />
-            <TextField fx:id="passwordField" layoutX="50.0" layoutY="248.0" prefHeight="39.0" prefWidth="308.0" />
-            <Label layoutX="50.0" layoutY="221.0" prefHeight="17.0" prefWidth="83.0" text="PASSWORD">
+            <TextField fx:id="emailField" layoutX="50.0" layoutY="163.0" prefHeight="39.0" prefWidth="308.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
+            <TextField fx:id="passwordField" layoutX="50.0" layoutY="248.0" prefHeight="39.0" prefWidth="308.0" styleClass="animatedTextField" />
+            <Label layoutX="50.0" layoutY="221.0" prefHeight="21.0" prefWidth="98.0" text="PASSWORD">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Button fx:id="loginBtn" layoutX="121.0" layoutY="331.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="39.0" prefWidth="158.0" styleClass="button1" stylesheets="@stylesheet.css" text="LOGIN" textFill="WHITE">
+            <Button fx:id="loginBtn" layoutX="121.0" layoutY="331.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="39.0" prefWidth="158.0" styleClass="buttonSUBMIT" stylesheets="@stylesheet.css" text="LOGIN" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="14.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <Button fx:id="homeBtn" layoutX="14.0" layoutY="370.0" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="30.0" prefWidth="30.0" />
+            <Button fx:id="homeBtn" layoutX="14.0" layoutY="412.0" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="30.0" prefWidth="30.0" styleClass="buttonBACK" text="&lt;" />
             <Label fx:id="messageLabel" layoutX="44.0" layoutY="306.0" prefHeight="17.0" prefWidth="320.0" />
          </children>
       </Pane>

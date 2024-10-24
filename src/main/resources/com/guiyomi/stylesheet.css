@@ -1,55 +1,204 @@
+@font-face {
+    font-family: 'BigNoodleTitling';
+    src: url('bignoodletitling/big_noodle_titling.ttf');
+}
+
+@font-face {
+    font-family: 'BigNoodleOblique';
+    src: url('bignoodletitling/big_noodle_titling_oblique.ttf');
+}
 
 .background-pane {
     -fx-background-color: #8680f2;
 }
 
 
-.chatList-pane {
-    -fx-background-color: #eee3ff;
-}
-
-.Mainchat-pane {
-    -fx-background-color: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0.5, 0, 0); 
-}
-
-.Media-pane {
-    -fx-background-color: #6a7bdd;
-}
-
-.MediaDP-pane {
-    -fx-background-color: #ffffff;
-}
-
 .rounded-pane {
     -fx-background-color: #ffffff;  
-    -fx-background-radius: 25 25 0 0; 
+    -fx-background-radius: 15 15 0 0; 
     -fx-padding: 15;              
     -fx-border-color: #ffffff;      
-    -fx-border-radius: 25 25 0 0;    
+    -fx-border-radius: 15 15 0 0;    
     -fx-border-width: 2;           
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.5, 3, 0); 
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.5, 0, 0); 
 }
 
-.GamesRounded-pane {
-        -fx-background-color: #ffffff;      /* White background */
-        -fx-background-radius: 20;          /* Rounded corners (20px radius) */
-        -fx-padding: 15;                    /* Padding inside the rectangle */
-        -fx-border-color: lightgray;        /* Light gray border */
-        -fx-border-width: 1;                /* Thin border */
-        -fx-border-radius: 20;              /* Rounded corners for the border */
-        -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.5, 0, 2);
-    }
     
+/* BUTTONS */
+
+/* LOGIN */
+.buttonSUBMIT {
+    -fx-font-family: 'BigNoodleTitling';
+    -fx-background-color: #6a7bdd;
+    -fx-border-color: #6a7bdd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 30px;
+    -fx-background-radius: 30px;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 600;
+    -fx-font-size: 18px;
+    -fx-padding: 0 18px;
+    -fx-min-height: 50px;
+    -fx-alignment: center;
+    -fx-box-shadow: rgb(98,0,234) 4px 4px 0 0;
+    -fx-cursor: hand;
+  }
+  
+  .buttonSUBMIT:hover {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #6a7bdd;
+  }
+  
+  .buttonSUBMIT:active {
+    -fx-effect: dropshadow(one-pass-box, rgba(98,0,234, 1), 2, 2, 0, 0);
+    -fx-translate-x: 2px;
+    -fx-translate-y: 2px;
+  }
+  
+  @media (min-width: 768px) {
+    .buttonSUBMIT {
+      -fx-min-width: 120px;
+      -fx-padding: 0 25px;
+    }
+  }
+  
+  /* WELCOME PAGE */
+.buttonWELCOME {
+    -fx-font-family: 'BigNoodleTitling';
+    -fx-background-color: #6a7bdd;
+    -fx-border-color: #6a7bdd;
+    -fx-border-width: 3px;
+    -fx-border-radius: 30px;
+    -fx-background-radius: 30px;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 600;
+    -fx-font-size: 30px;
+    -fx-padding: 0 18px;
+    -fx-min-height: 50px;
+    -fx-alignment: center;
+    -fx-box-shadow: rgb(98,0,234) 4px 4px 0 0;
+    -fx-cursor: hand;
+  }
+  
+  .buttonWELCOME:hover {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #6a7bdd;
+  }
+  
+  .buttonWELCOME:active {
+    -fx-effect: dropshadow(one-pass-box, rgba(98,0,234, 1), 2, 2, 0, 0);
+    -fx-translate-x: 2px;
+    -fx-translate-y: 2px;
+  }
+  
+  @media (min-width: 768px) {
+    .buttonWELCOME {
+      -fx-min-width: 120px;
+      -fx-padding: 0 25px;
+    }
+  }
+
+  .buttonBACK {
+    -fx-font-family: 'BigNoodleTitling';
+    -fx-background-color: #6a7bdd;
+    -fx-border-color: #6a7bdd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 16px; /* Half of 32px */
+    -fx-background-radius: 16px; /* Half of 32px */
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 1000;
+    -fx-font-size: 17px; /* Smaller font to fit in the button */
+    -fx-padding: 0; /* No padding since we're fixing the height and width */
+    -fx-min-height: 32px; /* Set height to 32px */
+    -fx-min-width: 32px;  /* Set width to 32px */
+    -fx-max-height: 32px; /* Ensure button size stays fixed */
+    -fx-max-width: 32px;  /* Ensure button size stays fixed */
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.buttonBACK:hover {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #6a7bdd;
+}
+
+.buttonBACK:active {
+    -fx-effect: dropshadow(one-pass-box, rgba(98,0,234, 1), 2, 2, 0, 0);
+    -fx-translate-x: 2px;
+    -fx-translate-y: 2px;
+}
+
+@media (min-width: 768px) {
+    .buttonBACK {
+        -fx-min-width: 32px; /* Button stays 32px wide */
+        -fx-padding: 0;
+    }
+}
+
+
+  /* glowing button */
+.glowingButton {
+    -fx-background-color: #6200ea;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10 20 10 20;
+    -fx-border-radius:20px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(98,0,234,0.6), 10, 0, 0, 0);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.glowingButton:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(98,0,234,1), 20, 0, 0, 0);
+}
 
 
 .button1{
-    -fx-text-fill: #ffffff;
-    -fx-background-color: #6a7bdd;;
+    -fx-font-family: 'BigNoodleTitling';
+    -fx-text-fill: #6a7bdd;
+    -fx-background-color: #ffffff;;
     -fx-border-radius: 20;
     -fx-background-radius: 20;
     -fx-padding: 5;
 }
+
+/* BUTTON FOR THE CHOOSE PIC */
+.buttonPHOTO {
+    -fx-font-family:'BigNoodleTitling';
+    -fx-background-color: #ffffff;
+    -fx-border-color: #6a7bdd;
+    -fx-border-width: 1px;
+    -fx-border-radius: 30px;
+    -fx-background-radius: 30px;
+    -fx-text-fill: #6a7bdd;
+    -fx-font-weight: 600;
+    -fx-font-size: 18px;
+    -fx-padding: 0;
+    -fx-min-height: 50px;
+    -fx-alignment: center;
+    -fx-box-shadow: rgb(98,0,234) 4px 4px 0 0;
+    -fx-cursor: hand;
+  }
+  
+  .buttonPHOTO:hover {
+    -fx-background-color: #6a7bdd;
+    -fx-text-fill: #ffffff;
+  }
+  
+  .buttonPHOTO:active {
+    -fx-effect: dropshadow(one-pass-box, rgba(98,0,234, 1), 2, 2, 0, 0);
+    -fx-translate-x: 2px;
+    -fx-translate-y: 2px;
+  }
+  
+  @media (min-width: 768px) {
+    .buttonPHOTO {
+      -fx-min-width: 120px;
+      -fx-padding: 0 25px;
+    }
+  }
+
 
 .buttonChat{
     -fx-text-fill: #ffffff;
@@ -57,6 +206,8 @@
     -fx-padding: 5;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 2, 0.3, 0, 0); 
 }
+
+
 
 .LoginTF{
     -fx-text-fill: #ffffff;
@@ -85,4 +236,40 @@
 }
 
 
+/* TEXTFIELD */
+/* Basic TextField Styles */
+.animatedTextField {
+    -fx-background-color: white;
+    -fx-border-color: #d3d3d3; /* Light grey border */
+    -fx-border-width: 1px;
+    -fx-padding: 10px; /* Padding for inner text */
+    -fx-background-radius: 15px; /* Rounded corners */
+    -fx-border-radius: 15px; /* Rounded corners for the border */
+    -fx-prompt-text-fill: #888; /* Color of placeholder text */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0), 0, 0, 0, 0); /* Initial shadow effect */
+    -fx-transition: -fx-effect 0.3s, -fx-border-color 0.3s; /* Transition for effects */
+}
 
+/* Hover Effect */
+.animatedTextField:hover {
+    -fx-border-color: #a9a9a9;
+}
+
+/* Focused State */
+.animatedTextField:focused {
+    -fx-border-width: 0px;
+    -fx-border-color: #6a7bdd; 
+    -fx-effect: dropshadow(gaussian, rgba(106, 123, 221, 1), 10, 0, 0, 0); 
+}
+
+/* Placeholder text style on hover and focus */
+.animatedTextField:focused .text {
+    -fx-prompt-text-fill: transparent; /* Hide prompt text when focused */
+}
+
+
+
+
+
+
+  

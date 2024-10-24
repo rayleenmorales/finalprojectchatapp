@@ -9,17 +9,17 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.GetStartedController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.GetStartedController">
    <children>
       <ImageView fitHeight="600.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/GET STARTED HERE.png" />
+            <Image url="@images/WELCOMESCREEN3.png" />
          </image>
       </ImageView>
       <Pane prefHeight="432.0" prefWidth="400.0" />
       <Pane layoutX="-4.0" layoutY="441.0" prefHeight="160.0" prefWidth="406.0" styleClass="dark-gray-background">
          <children>
-            <Label fx:id="signupLabel" layoutX="154.0" layoutY="98.0" text="New to Ka-Talk?" textFill="#6d59bc">
+            <Label fx:id="signupLabel" layoutX="154.0" layoutY="98.0" text="New to Ka-Talk?" textFill="WHITE">
                <font>
                   <Font size="19.0" url="@bignoodletitling/big_noodle_titling_oblique.ttf" />
                </font>
@@ -27,7 +27,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Button fx:id="signinBtn" layoutX="126.0" layoutY="28.0" mnemonicParsing="false" onAction="#HandleSignInBtn" prefHeight="61.0" prefWidth="148.0" styleClass="button1" stylesheets="@stylesheet.css" text="SIGN-IN">
+            <Button fx:id="signinBtn" layoutX="126.0" layoutY="28.0" mnemonicParsing="false" onAction="#HandleSignInBtn" prefHeight="61.0" prefWidth="148.0" styleClass="buttonWELCOME" stylesheets="@stylesheet.css" text="SIGN-IN">
                <font>
                   <Font name="System Bold" size="19.0" />
                </font>
