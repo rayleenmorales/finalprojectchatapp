@@ -50,6 +50,17 @@ public class SignUpPageController {
     private File profilePhoto;
 
     @FXML
+    public void handleHomeButton(ActionEvent event) throws Exception {
+        // If sign up button pressed, show sign up page
+        Parent chatMainParent = FXMLLoader.load(getClass().getResource("GET STARTED.fxml"));
+        Scene chatMainScene = new Scene(chatMainParent);
+
+        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+        window.setScene(chatMainScene);
+        window.show();
+    }
+    
+    @FXML
     public void handleSignUpButton(ActionEvent event) throws Exception {
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();

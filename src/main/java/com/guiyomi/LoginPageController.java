@@ -30,7 +30,7 @@ public class LoginPageController {
     private FirebaseService authService = new FirebaseService();
 
     @FXML
-    public void handleSignUpButton(ActionEvent event) throws Exception {
+    public void handleHomeButton(ActionEvent event) throws Exception {
         // If sign up button pressed, show sign up page
         Parent chatMainParent = FXMLLoader.load(getClass().getResource("GET STARTED.fxml"));
         Scene chatMainScene = new Scene(chatMainParent);

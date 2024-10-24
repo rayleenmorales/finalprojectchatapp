@@ -65,7 +65,7 @@
                   <Font size="59.0" url="@bignoodletitling/big_noodle_titling_oblique.ttf" />
                </font>
             </Label>
-            <Button fx:id="homeBtn" layoutX="20.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleSignUpButton" prefHeight="30.0" prefWidth="30.0" />
+            <Button fx:id="homeBtn" layoutX="20.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="30.0" prefWidth="30.0" />
          </children>
       </Pane>
    </children>
