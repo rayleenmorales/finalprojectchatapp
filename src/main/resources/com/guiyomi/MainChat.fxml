@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="800.0" prefWidth="1300.0">
+         <children>
+            <HBox prefHeight="800.0" prefWidth="1300.0">
+               <children>
+                  <Pane prefHeight="800.0" prefWidth="101.0" styleClass="Mainchat-pane" stylesheets="@stylesheet.css">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="101.0">
+                           <children>
+                              <Separator prefHeight="16.0" prefWidth="101.0" />
+                              <Circle radius="45.0" stroke="#ffeaea" strokeType="INSIDE" strokeWidth="0.0" />
+                              <Separator prefHeight="28.0" prefWidth="102.0" />
+                              <Label text="Nickname">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Separator prefHeight="30.0" prefWidth="102.0" />
+                              <Button mnemonicParsing="false" prefHeight="55.0" prefWidth="55.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
+                                 <graphic>
+                                    <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@CHAT%20ICON%20BLACK.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Separator prefHeight="26.0" prefWidth="102.0" />
+                              <Button mnemonicParsing="false" prefHeight="55.0" prefWidth="55.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
+                                 <graphic>
+                                    <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@HIDE%20CHATS.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </children></Pane>
+                  <Pane prefHeight="800.0" prefWidth="281.0" styleClass="Mainchat-pane">
+                     <children>
+                        <VBox prefHeight="800.0" prefWidth="281.0">
+                           <children>
+                              <Pane prefHeight="69.0" prefWidth="310.0">
+                                 <children>
+                                    <TextField id="customTextField" layoutX="66.0" layoutY="16.0" prefHeight="46.0" prefWidth="197.0" promptText="Looking to Ka-Talk?" styleClass="minimal-textfield" stylesheets="@stylesheet.css" />
+                                    <Button layoutX="13.0" layoutY="16.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="43.0">
+                                       <graphic>
+                                          <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@SEARCH.jpg" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                              <Separator prefHeight="6.0" prefWidth="310.0" />
+                              <Pane prefHeight="79.0" prefWidth="310.0" styleClass="chat-pane" stylesheets="@stylesheet.css">
+                                 <children>
+                                    <Circle fill="#b75555" layoutX="45.0" layoutY="40.0" radius="31.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                                    <Label layoutX="86.0" layoutY="9.0" prefHeight="38.0" prefWidth="180.0" text="Name Placeholder.">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="86.0" layoutY="40.0" prefHeight="24.0" prefWidth="180.0" text="Chat: Lorem Ipsum">
+                                       <font>
+                                          <Font name="Arial" size="16.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </Pane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </Pane>
+                  <Pane prefHeight="800.0" prefWidth="558.0" styleClass="Mainchat-pane" stylesheets="@stylesheet.css">
+                     <children>
+                        <VBox prefHeight="800.0" prefWidth="558.0">
+                           <children>
+                              <Pane prefHeight="79.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
+                                 <children>
+                                    <Circle fill="#615ed1" layoutX="40.0" layoutY="40.0" radius="26.0" stroke="#dcc1c1" strokeType="INSIDE" strokeWidth="0.0" />
+                                    <Label layoutX="83.0" layoutY="14.0" text="Name Placeholder">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="82.0" layoutY="40.0" text="Active now" textFill="#3f9e4a">
+                                       <font>
+                                          <Font name="Arial" size="17.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="661.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
+                                 <children>
+                                    <ScrollPane prefHeight="661.0" prefWidth="558.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                      </content>
+                                    </ScrollPane>
+                                 </children></Pane>
+                              <Separator prefHeight="7.0" prefWidth="558.0" />
+                              <Pane prefHeight="50.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
+                                 <children>
+                                    <HBox prefHeight="50.0" prefWidth="558.0">
+                                       <children>
+                                          <Separator orientation="VERTICAL" prefHeight="50.0" prefWidth="8.0" />
+                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="45.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
+                                             <graphic>
+                                                <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@Emoji.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="45.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
+                                             <graphic>
+                                                <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@CLIP.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <TextField prefHeight="50.0" prefWidth="400.0" styleClass="minimal-textfield" stylesheets="@stylesheet.css" />
+                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="45.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
+                                             <graphic>
+                                                <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@send.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children></Pane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </Pane>
+                  <Pane prefHeight="800.0" prefWidth="360.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
+                     <children>
+                        <VBox prefHeight="800.0" prefWidth="359.0">
+                           <children>
+                              <Pane prefHeight="264.0" prefWidth="359.0">
+                                 <children>
+                                    <Circle fill="#7b6cef" layoutX="180.0" layoutY="102.0" radius="88.0" stroke="WHITE" strokeType="INSIDE" />
+                                    <Label layoutX="45.0" layoutY="197.0" text="Name Placeholder">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="3.0" layoutY="240.0" prefHeight="28.0" prefWidth="151.0" text="Attachments" textFill="#8a8a8a">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="17.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </Pane>
+                              <Separator prefHeight="8.0" prefWidth="359.0" />
+                              <Pane prefHeight="286.0" prefWidth="359.0" styleClass="Media-pane">
+                                 <children>
+                                    <ScrollPane prefHeight="284.0" prefWidth="359.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="285.0" prefWidth="360.0">
+                                             <children>
+                                                <GridPane prefHeight="284.0" prefWidth="359.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                </GridPane>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
+                                 </children></Pane>
+                              <Separator prefWidth="200.0" />
+                              <Pane prefHeight="250.0" prefWidth="359.0">
+                                 <children>
+                                    <VBox prefHeight="248.0" prefWidth="359.0">
+                                       <children>
+                                          <Pane prefHeight="28.0" prefWidth="359.0">
+                                             <children>
+                                                <Label prefHeight="16.0" prefWidth="151.0" text="Games" textFill="#8a8a8a">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </Pane>
+                                          <ScrollPane prefHeight="218.0" prefWidth="359.0">
+                                             <content>
+                                                <VBox prefHeight="219.0" prefWidth="358.0" />
+                                             </content>
+                                          </ScrollPane>
+                                       </children>
+                                    </VBox>
+                                 </children></Pane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </Pane>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

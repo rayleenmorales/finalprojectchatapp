@@ -28,7 +28,7 @@ public class LoginPageController {
     @FXML
     public void handleSignUpButton(ActionEvent event) throws Exception {
         // If sign up button pressed, show sign up page
-        Parent chatMainParent = FXMLLoader.load(getClass().getResource("SignUpPage.fxml"));
+        Parent chatMainParent = FXMLLoader.load(getClass().getResource("SING UP PAGE.fxml"));
         Scene chatMainScene = new Scene(chatMainParent);
 
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();

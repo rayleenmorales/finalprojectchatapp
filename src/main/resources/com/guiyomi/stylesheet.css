@@ -1,0 +1,88 @@
+
+.background-pane {
+    -fx-background-color: #8680f2;
+}
+
+
+.chatList-pane {
+    -fx-background-color: #eee3ff;
+}
+
+.Mainchat-pane {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0.5, 0, 0); 
+}
+
+.Media-pane {
+    -fx-background-color: #6a7bdd;
+}
+
+.MediaDP-pane {
+    -fx-background-color: #ffffff;
+}
+
+.rounded-pane {
+    -fx-background-color: #ffffff;  
+    -fx-background-radius: 25 25 0 0; 
+    -fx-padding: 15;              
+    -fx-border-color: #ffffff;      
+    -fx-border-radius: 25 25 0 0;    
+    -fx-border-width: 2;           
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.5, 3, 0); 
+}
+
+.GamesRounded-pane {
+        -fx-background-color: #ffffff;      /* White background */
+        -fx-background-radius: 20;          /* Rounded corners (20px radius) */
+        -fx-padding: 15;                    /* Padding inside the rectangle */
+        -fx-border-color: lightgray;        /* Light gray border */
+        -fx-border-width: 1;                /* Thin border */
+        -fx-border-radius: 20;              /* Rounded corners for the border */
+        -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.5, 0, 2);
+    }
+    
+
+
+.button1{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #6a7bdd;;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+}
+
+.buttonChat{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #ffffff;;
+    -fx-padding: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 2, 0.3, 0, 0); 
+}
+
+.LoginTF{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #6a7bdd;;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+}
+
+.minimal-textfield {
+    -fx-background-color: white;               
+    -fx-text-fill: black;                     
+    -fx-padding: 10;                        
+    -fx-background-radius: 5;                 
+    -fx-border-color: lightgray;            
+    -fx-border-radius: 5;                     
+    -fx-border-width: 1;                      
+    
+    /* Minimal shadow effect */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 3, 0.2, 0, 2);
+}
+
+.minimal-textfield:focused {
+    -fx-border-color: #0077FF;               
+    -fx-effect: dropshadow(gaussian, rgba(0, 119, 255, 0.3), 5, 0.5, 0, 2); 
+}
+
+
+
