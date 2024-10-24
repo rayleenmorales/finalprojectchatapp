@@ -28,21 +28,21 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField layoutX="36.0" layoutY="98.0" prefHeight="39.0" prefWidth="153.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <TextField fx:id="firstNameField" layoutX="36.0" layoutY="98.0" prefHeight="39.0" prefWidth="153.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
             <Label layoutX="38.0" layoutY="157.0" text="EMAIL">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField layoutX="36.0" layoutY="176.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
-            <Button layoutX="143.0" layoutY="396.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="121.0" styleClass="button1" text="SIGN UP">
+            <TextField fx:id="emailField" layoutX="36.0" layoutY="176.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <Button fx:id="signUpBtn" layoutX="143.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleSignUpButton" prefHeight="39.0" prefWidth="121.0" styleClass="button1" text="SIGN UP">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <TextField layoutX="36.0" layoutY="253.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <TextField fx:id="passwordField" layoutX="36.0" layoutY="253.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
             <Label layoutX="38.0" layoutY="234.0" text="PASSWORD">
                <font>
                   <Font name="System Bold" size="13.0" />
@@ -53,8 +53,8 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextField layoutX="214.0" layoutY="98.0" prefHeight="39.0" prefWidth="153.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
-            <TextField layoutX="35.0" layoutY="333.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <TextField fx:id="lastNameField" layoutX="214.0" layoutY="98.0" prefHeight="39.0" prefWidth="153.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
+            <TextField fx:id="confirmPasswordField" layoutX="35.0" layoutY="333.0" prefHeight="39.0" prefWidth="327.0" styleClass="LoginTF" stylesheets="@stylesheet.css" />
             <Label layoutX="35.0" layoutY="314.0" text="RE-ENTER PASSWORD">
                <font>
                   <Font name="System Bold" size="13.0" />
@@ -66,6 +66,12 @@
                </font>
             </Label>
             <Button fx:id="homeBtn" layoutX="20.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="30.0" prefWidth="30.0" />
+            <Label fx:id="messageLabel" layoutX="42.0" layoutY="379.0" prefHeight="17.0" prefWidth="320.0" />
+            <Button fx:id="chooseProfileBtn" layoutX="58.0" layoutY="405.0" mnemonicParsing="false" onAction="#handleChooseProfileButton" prefHeight="30.0" prefWidth="65.0" text="Choose Pic">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
    </children>

@@ -40,7 +40,7 @@
                                  <graphic>
                                     <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@CHAT%20ICON%20BLACK.png" />
+                                          <Image url="@Images/icons/CHAT ICON BLACK.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -50,7 +50,7 @@
                                  <graphic>
                                     <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@HIDE%20CHATS.png" />
+                                          <Image url="@Images/icons/HIDE CHATS.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -69,7 +69,7 @@
                                        <graphic>
                                           <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@SEARCH.jpg" />
+                                                <Image url="@Images/icons/SEARCH.jpg" />
                                              </image>
                                           </ImageView>
                                        </graphic>
@@ -133,7 +133,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@Emoji.png" />
+                                                      <Image url="@Images/icons/Emoji.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
@@ -142,7 +142,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@CLIP.png" />
+                                                      <Image url="@Images/icons/CLIP.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
@@ -152,7 +152,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@send.png" />
+                                                      <Image url="@Images/icons/send.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>

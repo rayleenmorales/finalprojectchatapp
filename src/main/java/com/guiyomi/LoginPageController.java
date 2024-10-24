@@ -25,6 +25,9 @@ public class LoginPageController {
     private Label messageLabel;
 
     @FXML
+    private Button loginBtn;
+
+    @FXML
     private Button homeBtn;
 
     private FirebaseService authService = new FirebaseService();

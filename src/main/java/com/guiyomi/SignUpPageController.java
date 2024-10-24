@@ -1,5 +1,10 @@
 package com.guiyomi;
 
+import java.io.File;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,8 +16,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.File;
-import java.util.Map;
 
 
 public class SignUpPageController {
@@ -59,7 +62,7 @@ public class SignUpPageController {
         window.setScene(chatMainScene);
         window.show();
     }
-    
+
     @FXML
     public void handleSignUpButton(ActionEvent event) throws Exception {
         String firstName = firstNameField.getText();
@@ -74,10 +77,15 @@ public class SignUpPageController {
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty() || profilePhoto == null) {
             messageLabel.setText("Please fill in all fields.");
             return;
-        }        
+        }
+        
+        if (!isValidEmail(email)) {
+            messageLabel.setText("Email is not valid.");
+            return;
+        }
 
         if(password.length() < 6) {
-            messageLabel.setText("Invalid password.");
+            messageLabel.setText("Password should be more than 6 characters.");
             return;
         }
 
@@ -94,7 +102,7 @@ public class SignUpPageController {
             String idToken = authData.get("idToken");
     
             // Upload the profile photo and get the download URL
-            String profilePhotoUrl = authService.uploadProfilePhoto(profilePhoto, idToken);
+           String profilePhotoUrl = authService.uploadProfilePhoto(profilePhoto, idToken);
     
             if (profilePhotoUrl != null) {
                 // Save user info to Firestore with profile photo URL
@@ -108,6 +116,8 @@ public class SignUpPageController {
             e.printStackTrace();
             messageLabel.setText("Sign up failed.");
         }
+
+        
     }
 
     @FXML
@@ -134,4 +144,18 @@ public class SignUpPageController {
         window.show();
     } 
     
+    public boolean isValidEmail(String email) {
+        // Regular expression for validating email format
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" +
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        
+        Pattern pattern = Pattern.compile(emailRegex);
+        
+        if (email == null) {
+            return false;
+        }
+        
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }
