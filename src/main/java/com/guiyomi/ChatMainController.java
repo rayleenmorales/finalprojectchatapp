@@ -13,6 +13,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +24,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -38,7 +43,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 
-public class ChatMainController {
+public class ChatMainController extends Application {
 
 
     @FXML
@@ -74,6 +79,24 @@ public class ChatMainController {
 
 
     FirebaseService firebaseService = new FirebaseService();
+
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("MainChat.fxml"));
+            primaryStage.setTitle("KaTalk");
+            primaryStage.setScene(new Scene(root));
+            primaryStage.show();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        primaryStage.setOnCloseRequest(e ->{
+            e.consume();
+            LogOutConfirmation(primaryStage);
+        });
+    }
 
 
     @FXML
@@ -119,25 +142,51 @@ public class ChatMainController {
     }
 
 
-    @FXML
+   @FXML
     public void handleLogOutButton(ActionEvent event) throws Exception {
-        // Update the logged-in status in Firestore to false
-       
-        String userId = UserSession.getUserId();
-        String idToken = UserSession.getIdToken(); // Replace with the actual token
-
-
-        firebaseService.setUserLoggedInStatus(userId, false, idToken);
-
-
-        // End the session and load the login page
-        UserSession.endSession();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.centerOnScreen();
-        stage.show();
+        LogOutConfirmation(stage);
+    }
+
+    public void LogOutConfirmation(Stage stage) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        DialogPane dPane = new DialogPane();
+        VBox content = new VBox(10);
+        dialog.setTitle("Logout Confirmation");
+        content.getChildren().add(new Label("Are you sure you want to log out?"));
+        dPane.setContent(content);
+        dPane.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+        dPane.setGraphic(null);
+        dialog.setDialogPane(dPane);
+
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES){
+                System.out.println("Proceed Logout.");
+                
+                try{
+                    //handle logout here
+                    String userId = UserSession.getUserId();
+                    String idToken = UserSession.getIdToken(); // Replace with the actual token
+
+                    firebaseService.setUserLoggedInStatus(userId, false, idToken);
+
+                    UserSession.endSession();
+                    Parent root = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
+                    Scene scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.show();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Logout Failed.");
+                }
+                
+            }
+            if (response == ButtonType.NO){
+                System.out.println("Logout Canceled.");
+            }
+        });
+        
     }
 
 
