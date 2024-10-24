@@ -25,15 +25,7 @@
                         <VBox fx:id="userContainer" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="101.0">
                            <children>
                               <Separator prefHeight="16.0" prefWidth="101.0" />
-<<<<<<< HEAD
                               <Circle fx:id="currentUserProfile" radius="45.0" stroke="#ffeaea" strokeType="INSIDE" strokeWidth="0.0" />
-=======
-                              <ImageView fx:id="currentUserProfile" fitHeight="90.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@Images/your_image.png" /> <!-- Replace with your image path -->
-                                 </image>
-                              </ImageView>
->>>>>>> 47b03285a4d6eedd6fc9a81b488fb88b5f824612
                               <Separator prefHeight="28.0" prefWidth="102.0" />
                               <Label fx:id="currentUserLabel">
                                  <font>
