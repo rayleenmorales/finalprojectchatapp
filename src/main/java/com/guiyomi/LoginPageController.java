@@ -40,6 +40,7 @@ public class LoginPageController {
 
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
         window.setScene(chatMainScene);
+        window.centerOnScreen();
         window.show();
     }
 
@@ -67,6 +68,7 @@ public class LoginPageController {
                 // Get the stage information
                 Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
                 window.setScene(chatMainScene);
+                window.centerOnScreen();
                 window.show();
             }
 

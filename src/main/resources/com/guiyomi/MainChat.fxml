@@ -14,7 +14,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.ChatMainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.ChatMainController">
    <children>
       <AnchorPane prefHeight="800.0" prefWidth="1300.0">
          <children>
@@ -22,10 +22,10 @@
                <children>
                   <Pane prefHeight="800.0" prefWidth="101.0" styleClass="Mainchat-pane" stylesheets="@stylesheet.css">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="101.0">
+                        <VBox fx:id="userContainer" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="101.0">
                            <children>
                               <Separator prefHeight="16.0" prefWidth="101.0" />
-                              <Circle radius="45.0" stroke="#ffeaea" strokeType="INSIDE" strokeWidth="0.0" />
+                              <Circle fx:id="currentUserProfile" radius="45.0" stroke="#ffeaea" strokeType="INSIDE" strokeWidth="0.0" />
                               <Separator prefHeight="28.0" prefWidth="102.0" />
                               <Label fx:id="currentUserLabel">
                                  <font>
@@ -33,7 +33,7 @@
                                  </font>
                               </Label>
                               <Separator prefHeight="30.0" prefWidth="102.0" />
-                              <Button fx:id="logoutButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Logout" onAction="#handleLogOutButton" />
+                              <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogOutButton" prefHeight="30.0" prefWidth="80.0" text="Logout" />
                               <Separator prefHeight="30.0" prefWidth="102.0" />
                               <Button fx:id="chatButton" mnemonicParsing="false" prefHeight="55.0" prefWidth="55.0" styleClass="buttonChat" stylesheets="@stylesheet.css">
                                  <graphic>
@@ -100,8 +100,8 @@
                            <children>
                               <Pane prefHeight="79.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
                                  <children>
-                                    <Circle fill="#615ed1" layoutX="40.0" layoutY="40.0" radius="26.0" stroke="#dcc1c1" strokeType="INSIDE" strokeWidth="0.0" />
-                                    <Label layoutX="83.0" layoutY="14.0" text="Name Placeholder">
+                                    <Circle fx:id="selectedUserProfile" fill="#615ed1" layoutX="40.0" layoutY="40.0" radius="26.0" stroke="#dcc1c1" strokeType="INSIDE" strokeWidth="0.0" />
+                                    <Label fx:id="selectedUserLabel" layoutX="83.0" layoutY="14.0" text="Name Placeholder">
                                        <font>
                                           <Font name="Arial Rounded MT Bold" size="24.0" />
                                        </font>
@@ -115,7 +115,7 @@
                               </Pane>
                               <Pane prefHeight="661.0" prefWidth="558.0" styleClass="MediaDP-pane" stylesheets="@stylesheet.css">
                                  <children>
-                                    <ScrollPane prefHeight="661.0" prefWidth="558.0">
+                                    <ScrollPane fx:id="messageContainer" prefHeight="661.0" prefWidth="558.0">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
                                        </content>
