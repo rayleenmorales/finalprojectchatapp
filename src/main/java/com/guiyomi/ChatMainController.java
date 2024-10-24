@@ -1,39 +1,42 @@
 package com.guiyomi;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import javafx.application.Platform;
-
-// import java.io.BufferedReader;
-// import java.io.InputStreamReader;
-// import java.io.OutputStream;
-// import java.net.HttpURLConnection;
-// import java.net.URL;
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.util.Timer;
-// import java.util.TimerTask;
-
-// import org.json.JSONArray;
-// import org.json.JSONObject;
-
-// import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class ChatMainController {
+
     @FXML
     private VBox userContainer; 
 
@@ -41,19 +44,13 @@ public class ChatMainController {
     private VBox messageContainer;
 
     @FXML
-    private ScrollPane messageContainer2;
-
-    @FXML
     private TextField messageField; 
 
     @FXML
-    private Circle currentUserProfile;
+    private ImageView currentUserProfile;
 
     @FXML 
-    private Circle selectedUserProfile;
-
-    @FXML 
-    private Circle selectedUserProfile2;
+    private ImageView selectedUserProfile;
 
     @FXML
     private Label currentUserLabel;
@@ -61,18 +58,13 @@ public class ChatMainController {
     @FXML 
     private Label selectedUserLabel;
 
-    @FXML 
-    private Label selectedUserLabel2;
-
     @FXML
     private Button logOutBtn;
-
 
     FirebaseService firebaseService = new FirebaseService();
 
     @FXML
     public void initialize() {
-        
         // Load user's name and profile picture
         if (UserSession.isLoggedIn()) {
             // Load user data into the FXML elements
@@ -80,11 +72,10 @@ public class ChatMainController {
 
             // Load the profile photo from the URL
             String photoUrl = UserSession.getUserPhotoUrl();
-            System.out.println("PhotoUrl: " + photoUrl);
             if (photoUrl != null && !photoUrl.isEmpty()) {
                 try {
                     Image profilePhoto = new Image(photoUrl);
-                    Platform.runLater(() -> currentUserProfile.setFill(new ImagePattern(profilePhoto)));
+                    currentUserProfile.setImage(profilePhoto);
                 } catch (Exception e) {
                     System.out.println("Error loading profile photo: " + e.getMessage());
                 }
@@ -93,7 +84,7 @@ public class ChatMainController {
             }
         }
 
-        // // Start fetching messages periodically
+        // Uncomment below if you want to periodically fetch messages
         // timer = new Timer();
         // timer.schedule(new TimerTask() {
         //     @Override
@@ -102,13 +93,14 @@ public class ChatMainController {
         //     }
         // }, 0, 5000); // Fetch every 5 seconds
 
-        // // Load users when the controller initializes
-        // loadUsers();
+        // Load users when the controller initializes
+        populateUserListWithHttp();
     }
 
     @FXML
     public void handleLogOutButton(ActionEvent event) throws Exception {
         // Update the logged-in status in Firestore to false
+        
         String userId = UserSession.getUserId();
         String idToken = UserSession.getIdToken(); // Replace with the actual token
 
@@ -123,201 +115,307 @@ public class ChatMainController {
         stage.show();
     }
 
+   private void populateUserListWithHttp() {
+    String url = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/users";
+    
+    try {
+        String jsonResponse = sendHttpGetRequest(url);
+        JSONObject jsonResponseObject = new JSONObject(jsonResponse);
+        JSONArray documents = jsonResponseObject.getJSONArray("documents");
 
-    // @FXML
-    // public void handleSendButton(ActionEvent event) throws Exception {
+        // Clear the VBox before adding new users
+        Platform.runLater(() -> userContainer.getChildren().clear());
 
-    // }
+        // Iterate over the documents array
+        for (int i = 0; i < documents.length(); i++) {
+            JSONObject document = documents.getJSONObject(i);
+            JSONObject fields = document.getJSONObject("fields");
+
+            // Extract first and last names
+            String firstName = fields.has("firstName") ? 
+                fields.getJSONObject("firstName").getString("stringValue") : "Unknown";
+            String lastName = fields.has("lastName") ? 
+                fields.getJSONObject("lastName").getString("stringValue") : "Unknown";
+
+            // Create a new Pane for each user
+            Pane userPane = createUserPane(firstName + " " + lastName, "Chat: Lorem Ipsum");
+            userPane.setOnMouseClicked(event -> selectUser(firstName + " " + lastName, "")); // Add logic for profile picture if needed
+
+            // Add user pane to the user container
+            Platform.runLater(() -> userContainer.getChildren().add(userPane));
+        }
+    } catch (JSONException e) {
+        e.printStackTrace(); // Handle the exception appropriately
+    } catch (Exception e) {
+        e.printStackTrace(); // Handle any other exceptions
+    }
+}
+
+private Pane createUserPane(String userName, String chatPreview) {
+    Pane userPane = new Pane();
+    userPane.setPrefSize(310.0, 79.0);
+    userPane.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-color: lightgray; -fx-border-width: 1;");
+
+    // Create the Circle for the profile picture
+    Circle profilePic = new Circle(31.0, Color.RED); // Placeholder for now
+    profilePic.setStroke(Color.BLACK);
+    profilePic.setStrokeType(StrokeType.INSIDE);
+    profilePic.setLayoutX(45.0);
+    profilePic.setLayoutY(40.0);
+
+    // Create the name label
+    Label nameLabel = new Label(userName);
+    nameLabel.setLayoutX(86.0);
+    nameLabel.setLayoutY(9.0);
+    nameLabel.setPrefHeight(38.0);
+    nameLabel.setPrefWidth(180.0);
+    nameLabel.setFont(new Font("Arial Rounded MT Bold", 16.0));
+
+    // Create the chat preview label
+    Label chatLabel = new Label(chatPreview);
+    chatLabel.setLayoutX(86.0);
+    chatLabel.setLayoutY(40.0);
+    chatLabel.setPrefHeight(24.0);
+    chatLabel.setPrefWidth(180.0);
+    chatLabel.setFont(new Font("Arial", 16.0));
+
+    // Add all elements to the userPane
+    userPane.getChildren().addAll(profilePic, nameLabel, chatLabel);
+    return userPane;
+}
+
+    
+
+
+public void selectUser(String fullName, String profilePicUrl) {
+    selectedUserLabel.setText(fullName); // Update the label with the selected user's name
+
+    // Clear previous messages in the messageContainer
+    messageContainer.getChildren().clear();  
+
+    // Load messages history for the selected user
+    loadMessageHistory(fullName);  
+
+    // If a profile picture URL is provided, load and display it
+    if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+        try {
+            Image profileImage = new Image(profilePicUrl);
+            selectedUserProfile.setImage(profileImage); // Display the selected user's profile picture
+        } catch (Exception e) {
+            System.out.println("Error loading selected user's profile picture: " + e.getMessage());
+        }
+    } else {
+        // Set a default image or clear the ImageView if no URL is available
+        selectedUserProfile.setImage(null); // Or set a default placeholder image
+    }
+}
+
+
+    
+    public void handleSendButton(ActionEvent event) {
+        String messageText = messageField.getText();
+        if (!messageText.isEmpty()) {
+            String selectedUser = selectedUserLabel.getText();
+            String currentUser = UserSession.getUserName();  // Assuming the current user's name is stored in session
+    
+            // Prepare the message data
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("sender", currentUser); // Use 'sender'
+            messageData.put("receiver", selectedUser); // Use 'receiver'
+            messageData.put("text", messageText); // Use 'text'
+            messageData.put("timestamp", Instant.now().toString()); // Use the current timestamp
+    
+            // Call the HTTP-based sendMessage method
+            boolean success = firebaseService.sendMessage(messageData); // This should now return a boolean
+            if (success) {
+                messageField.clear();  // Clear message field
+                displayMessage(messageText, true);  // Display the sent message in chat
+            } else {
+                // Display an error message to the user
+                System.out.println("Message sending failed. Please try again.");
+            }
+        }
+    }
     
     
 
-    // private final String FIREBASE_USERS_URL = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/users";
-    // private final String FIREBASE_MESSAGES_URL = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages"; // For fetching messages
-    // private final String FIREBASE_API_KEY = "AIzaSyBNtPixNZI2wecaRO37a3l0hkJsjBSYMsQ"; // Your Firebase API key
-
-    //private Timer timer;
-
-    // Fetch users from Firestore
-    // private void loadUsers() {
-    //     new Thread(() -> {
-    //         HttpURLConnection conn = null;
-    //         try {
-    //             URL url = new URL(FIREBASE_USERS_URL);
-    //             conn = (HttpURLConnection) url.openConnection();
-    //             conn.setRequestMethod("GET");
-    //             conn.setRequestProperty("Authorization", "Bearer " + userToken); // Add your token for authorization
-
-    //             int responseCode = conn.getResponseCode();
-    //             System.out.println("Response Code: " + responseCode);
-
-    //             if (responseCode == HttpURLConnection.HTTP_OK) {
-    //                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    //                 StringBuilder response = new StringBuilder();
-    //                 String inputLine;
-
-    //                 while ((inputLine = in.readLine()) != null) {
-    //                     response.append(inputLine);
-    //                 }
-    //                 in.close();
-
-    //                 // Parse the response and update the UI
-    //                 List<String> users = parseUserList(response.toString());
-    //                 Platform.runLater(() -> updateUserList(users));
-    //             } else {
-    //                 System.out.println("Failed to fetch users: " + conn.getResponseMessage());
-    //             }
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //         } finally {
-    //             if (conn != null) {
-    //                 conn.disconnect();
-    //             }
-    //         }
-    //     }).start();
-    // }
-
-    // private List<String> parseUserList(String jsonResponse) {
-    //     List<String> users = new ArrayList<>();
-    //     JSONObject jsonObject = new JSONObject(jsonResponse);
-    //     JSONArray documents = jsonObject.getJSONArray("documents");
-
-    //     for (int i = 0; i < documents.length(); i++) {
-    //         JSONObject userDocument = documents.getJSONObject(i);
-    //         String userName = userDocument.getJSONObject("fields").getJSONObject("name").getString("stringValue");
-    //         users.add(userName);
-    //     }
-    //     return users;
-    // }
-
-    // private void updateUserList(List<String> users) {
-    //     userContainer.getChildren().clear(); // Clear existing user list
-    //     for (String user : users) {
-    //         // Create a label for each user
-    //         Label userLabel = new Label(user);
-    //         userContainer.getChildren().add(userLabel);
-    //     }
-    // }
-
-    // Fetch messages from Firestore
-    // private void fetchMessages() {
-    //     HttpURLConnection conn = null;
-    //     try {
-    //         URL url = new URL(FIREBASE_MESSAGES_URL);
-    //         conn = (HttpURLConnection) url.openConnection();
-    //         conn.setRequestMethod("GET");
-    //         conn.setRequestProperty("Authorization", "Bearer " + userToken); // Add your token for authorization
-    //         conn.setRequestProperty("Content-Type", "application/json");
-
-    //         int responseCode = conn.getResponseCode();
-    //         System.out.println("Response Code: " + responseCode);
-
-    //         if (responseCode == HttpURLConnection.HTTP_OK) {
-    //             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    //             StringBuilder response = new StringBuilder();
-    //             String inputLine;
-    //             while ((inputLine = in.readLine()) != null) {
-    //                 response.append(inputLine);
-    //             }
-    //             in.close();
-
-    //             // Parse and display messages
-    //             Platform.runLater(() -> displayMessages(response.toString()));
-    //         } else {
-    //             System.out.println("Failed to fetch messages: " + conn.getResponseMessage());
-    //         }
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     } finally {
-    //         if (conn != null) {
-    //             conn.disconnect();
-    //         }
-    //     }
-    // }
-
-    // Display messages in the VBox
-    // private void displayMessages(String jsonResponse) {
-    //     // Clear the current messages
-    //     messageContainer.getChildren().clear();
-
-    //     // Parse the JSON response
-    //     JSONObject jsonObject = new JSONObject(jsonResponse);
-    //     JSONArray documents = jsonObject.getJSONArray("documents");
-
-    //     for (int i = 0; i < documents.length(); i++) {
-    //         JSONObject messageDocument = documents.getJSONObject(i);
-    //         String msgText = messageDocument.getJSONObject("fields").getJSONObject("text").getString("stringValue");
-    //         Label messageLabel = new Label(msgText);
-    //         messageContainer.getChildren().add(messageLabel);
-    //     }
-    // }
-
-    // Send a message to Firestore
-    // private void sendMessage() {
-    //     String messageText = messageInput.getText();
-    //     String senderId = UserSession.getUserId(); // Get the logged-in user's ID
-    //     if (!messageText.isEmpty() && senderId != null) {
-    //         HttpURLConnection conn = null;
-    //         try {
-    //             URL url = new URL(FIREBASE_MESSAGES_URL); // Directly POST to messages collection
-    //             conn = (HttpURLConnection) url.openConnection();
-    //             conn.setRequestMethod("POST"); // Use POST for creating new document
-    //             conn.setRequestProperty("Authorization", "Bearer " + userToken); // Add your token for authorization
-    //             conn.setRequestProperty("Content-Type", "application/json");
-    //             conn.setDoOutput(true);
-    
-    //             // Create JSON object for the message
-    //             JSONObject message = new JSONObject();
-    //             message.put("fields", new JSONObject()
-    //                 .put("text", new JSONObject().put("stringValue", messageText))
-    //                 .put("senderId", new JSONObject().put("stringValue", senderId))
-    //                 .put("timestamp", new JSONObject().put("timestampValue", System.currentTimeMillis()))
-    //                 .put("type", new JSONObject().put("stringValue", "text"))
-    //                 .put("attachments", new JSONObject().put("arrayValue", new JSONArray()))); // Empty array for attachments
-                
-    //             // Debugging output
-    //             System.out.println("Sending message: " + message.toString());
-    
-    //             // Send the message
-    //             OutputStream os = conn.getOutputStream();
-    //             os.write(message.toString().getBytes());
-    //             os.flush();
-    //             os.close();
-    
-    //             // Check response code
-    //             int responseCode = conn.getResponseCode();
-    //             if (responseCode == HttpURLConnection.HTTP_OK) {
-    //                 // Clear input after sending
-    //                 messageInput.clear();
-    //                 // Optionally fetch messages after sending
-    //                 fetchMessages(); // Fetch messages to update UI immediately
-    //             } else {
-    //                 System.out.println("Error sending message: " + conn.getResponseMessage());
-    //             }
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //         } finally {
-    //             if (conn != null) {
-    //                 conn.disconnect();
-    //             }
-    //         }
-    //     }
-    // }
     
 
-    // Method to handle user token
-    // public void setUserToken(String token) {
-    //     if (token != null && !token.isEmpty()) {
-    //         this.userToken = token; // Set the token only if it's valid
-    //         System.out.println("User token set: " + userToken);
-    //     } else {
-    //         System.out.println("Invalid token provided.");
-    //     }
-    // }
+    public void displayMessage(String message, boolean isCurrentUser) {
+        HBox messageBox = new HBox();
+        messageBox.setSpacing(10);
 
-    // Clean up the timer when closing
-    // public void stop() {
-    //     if (timer != null) {
-    //         timer.cancel();
-    //     }
-    // }
+        Label messageLabel = new Label(message);
+        messageLabel.setFont(new Font("Arial", 12));
+
+        if (isCurrentUser) {
+            messageBox.setAlignment(Pos.CENTER_RIGHT);
+        } else {
+            messageBox.setAlignment(Pos.CENTER_LEFT);
+        }
+
+        messageBox.getChildren().add(messageLabel);
+        Platform.runLater(() -> messageContainer.getChildren().add(messageBox));
+    }
+
+    private void loadMessageHistory(String userName) {
+        String currentUserUid = UserSession.getUserId();  // Get the current logged-in user's UID
+        String selectedUserUid = firebaseService.getUserUidByName(userName); // Get the UID for the selected user
+        String url = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages";
+    
+        try {
+            // Prepare the request URL with query parameters to filter by sender and receiver UID
+            String query = String.format("?where=(sender==\"%s\" AND receiver==\"%s\") OR (sender==\"%s\" AND receiver==\"%s\")", 
+                                          currentUserUid, selectedUserUid, selectedUserUid, currentUserUid);
+            URI uri = new URI(url + query);  // Create a URI object with query
+            URL obj = uri.toURL();   // Convert URI to URL
+            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+    
+            // Set request method to GET
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken()); // Add the token here
+    
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // success
+                // Read the response from the input stream
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+    
+                // Parse the JSON response
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                JSONArray documents = jsonResponse.getJSONArray("documents");
+    
+                // Clear the VBox before adding new messages
+                Platform.runLater(() -> messageContainer.getChildren().clear());
+    
+                for (int i = 0; i < documents.length(); i++) {
+                    JSONObject document = documents.getJSONObject(i);
+                    JSONObject fields = document.getJSONObject("fields");
+    
+                    String sender = fields.getJSONObject("sender").getString("stringValue");
+                    String message = fields.getJSONObject("text").getString("stringValue"); // Assuming your field is named "text"
+    
+                    // Display messages based on sender
+                    boolean isCurrentUser = sender.equals(UserSession.getUserName());
+                    displayMessage(message, isCurrentUser);
+                }
+            } else {
+                // Handle failure response
+                BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                StringBuilder errorResponse = new StringBuilder();
+                String errorLine;
+                while ((errorLine = errorReader.readLine()) != null) {
+                    errorResponse.append(errorLine);
+                }
+                errorReader.close();
+                System.out.println("GET request failed with response code " + responseCode + ": " + errorResponse.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
+    
+    
+    private String sendHttpGetRequest(String urlString) throws Exception {
+        // Create a URL object
+        URL url = new URL(urlString);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    
+        // Set request method to GET
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken());
+    
+        // Get response code and handle response
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            // Read response from the input stream
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+    
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+    
+            return response.toString();
+        } else {
+            throw new Exception("GET request failed. Response code: " + responseCode);
+        }
+    }
+    
+    
+    private void parseUsers(JSONArray documents) {
+        Platform.runLater(() -> userContainer.getChildren().clear());
+        for (int i = 0; i < documents.length(); i++) {
+            JSONObject document = documents.getJSONObject(i);
+            JSONObject fields = document.getJSONObject("fields");
+    
+            String userName = fields.getJSONObject("firstName").getString("stringValue") + " " +
+                              fields.getJSONObject("lastName").getString("stringValue");
+            String profilePicUrl = fields.has("profilePic") ? 
+                                   fields.getJSONObject("profilePic").getString("stringValue") : null;
+    
+            // Create Pane for each user
+            Pane userPane = new Pane();
+            userPane.setPrefHeight(79);
+            userPane.setPrefWidth(310);
+            userPane.getStyleClass().add("chat-pane"); // Add CSS class for styling
+    
+            // Create Circle for profile picture
+            Circle profileCircle = new Circle(31);
+            profileCircle.setFill(Color.RED); // Default color if image fails to load
+            profileCircle.setStroke(Color.BLACK);
+            profileCircle.setLayoutX(45);
+            profileCircle.setLayoutY(40);
+    
+            // Load profile picture
+            if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                try {
+                    Image profileImage = new Image(profilePicUrl, 62, 62, false, false);
+                    profileCircle.setFill(new ImagePattern(profileImage)); // Set image as fill for Circle
+                } catch (Exception e) {
+                    System.out.println("Error loading profile picture: " + e.getMessage());
+                }
+            }
+    
+            // Create Name Label
+            Label nameLabel = new Label(userName);
+            nameLabel.setLayoutX(86);
+            nameLabel.setLayoutY(9);
+            nameLabel.setPrefHeight(38);
+            nameLabel.setPrefWidth(180);
+            nameLabel.setFont(new Font("Arial Rounded MT Bold", 16));
+    
+            // Create Chat Label
+            Label chatLabel = new Label("Chat: Lorem Ipsum"); // Modify as needed
+            chatLabel.setLayoutX(86);
+            chatLabel.setLayoutY(40);
+            chatLabel.setPrefHeight(24);
+            chatLabel.setPrefWidth(180);
+            chatLabel.setFont(new Font("Arial", 16));
+    
+            // Add elements to Pane
+            userPane.getChildren().addAll(profileCircle, nameLabel, chatLabel);
+    
+            // Add mouse click event to select user
+            userPane.setOnMouseClicked(event -> selectUser(userName, profilePicUrl));
+    
+            // Add Pane to userContainer
+            Platform.runLater(() -> userContainer.getChildren().add(userPane));
+        }
+    }
+    
+
+
+    
+    
 }

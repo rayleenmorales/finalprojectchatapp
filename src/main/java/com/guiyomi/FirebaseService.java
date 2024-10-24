@@ -12,7 +12,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 
 public class FirebaseService {
 
@@ -354,5 +356,104 @@ public class FirebaseService {
 
         connection.disconnect();
     }
+
+            private static final String FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages";
+
+     public boolean sendMessage(Map<String, Object> messageData) {
+    String url = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages"; // Ensure this path is correct
+    try {
+        URL obj = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken());
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+        
+        // Construct the JSON payload
+        JSONObject json = new JSONObject();
+        JSONObject fields = new JSONObject();
+        
+        // Iterate through the message data and construct fields
+        for (Map.Entry<String, Object> entry : messageData.entrySet()) {
+            JSONObject fieldValue = new JSONObject();
+            // Handle different types (you may need to adjust this based on your actual data types)
+            if (entry.getValue() instanceof String) {
+                fieldValue.put("stringValue", entry.getValue());
+            } else if (entry.getValue() instanceof Integer) {
+                fieldValue.put("integerValue", entry.getValue());
+            } else if (entry.getValue() instanceof Boolean) {
+                fieldValue.put("booleanValue", entry.getValue());
+            } else {
+                // Handle other data types as necessary
+            }
+            fields.put(entry.getKey(), fieldValue);
+        }
+        
+        json.put("fields", fields);
+
+        // Write JSON data to request body
+        try (OutputStream os = connection.getOutputStream()) {
+            byte[] input = json.toString().getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            System.out.println("Message sent successfully.");
+        } else {
+            // Handle failure response
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            StringBuilder errorResponse = new StringBuilder();
+            String errorLine;
+            while ((errorLine = errorReader.readLine()) != null) {
+                errorResponse.append(errorLine);
+            }
+            errorReader.close();
+            System.out.println("POST request failed with response code " + responseCode + ": " + errorResponse.toString());
+        }
+        return true;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+        public String getUserUidByName(String fullName) {
+            User user = AuthenticationService.getUserByFullName(fullName);
+            if (user != null) {
+                return user.getUid(); // Assuming User has a getUid() method
+            }
+            return null; // Return null if user not found
+        }
+
+
+
+        public String sendHttpGetRequest(String urlString) throws Exception {
+            // Create a URL object
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Set request method to GET
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken());
+
+            // Get response code and handle response
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Read response from the input stream
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                return response.toString();
+            } else {
+                throw new Exception("GET request failed. Response code: " + responseCode);
+            }
+        }
+
 
 }
