@@ -112,6 +112,7 @@ public class SignUpPageController {
                 // Save user info to Firestore with profile photo URL
                 authService.saveUserInfo(uid, firstName, lastName, profilePhotoUrl, idToken);
                 messageLabel.setText("User signed up successfully!");
+                
             } else {
                 messageLabel.setText("Failed to upload profile photo.");
             }

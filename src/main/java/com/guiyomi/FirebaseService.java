@@ -4,14 +4,19 @@ import java.net.URL;
 import java.net.URI;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.nio.file.Path; 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -20,9 +25,8 @@ public class FirebaseService {
 
     private static final String API_KEY = "AIzaSyBNtPixNZI2wecaRO37a3l0hkJsjBSYMsQ";
     private static final String FIREBASE_PROJECT_ID = "katalk-db42a"; 
-    private static final String FIREBASE_STORAGE_BUCKET = "katalk-db42a.appspot.com"; 
-
-
+    private static final String FIREBASE_STORAGE_BUCKET = "katalk-db42a.appspot.com";     
+    
     // Method to sign up user email and password
     public Map<String, String> signUp(String email, String password) throws Exception {
         URI uri = URI.create("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + API_KEY);
@@ -132,8 +136,6 @@ public class FirebaseService {
         URI uri = URI.create(firestoreUrl);
         URL url = uri.toURL();
 
-        System.out.println("Firestore URL: " + firestoreUrl);
-
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Authorization", "Bearer " + idToken);
@@ -163,6 +165,126 @@ public class FirebaseService {
 
         connection.disconnect();
     }
+
+    //method to initialize messages subcollection upon sign up
+    public void createMessagesSubcollection(String userId, String userToken) throws Exception {
+        // Set up the document path and URL for the Firestore request
+        String userIdCombination = userId + "_" + userId;
+        String firestoreUrl = String.format("https://firestore.googleapis.com/v1/projects/%s/databases/(default)/documents/users/%s/messages?documentId=%s",
+                                            FIREBASE_PROJECT_ID, userId, userIdCombination);
+        URI uri = URI.create(firestoreUrl);
+        URL url = uri.toURL();
+
+        System.out.println("Firestore Messages URL: " + firestoreUrl);
+    
+        HttpURLConnection connection = null;
+    
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + userToken);
+            connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+    
+            // Create the JSON payload for the new document
+            String timeStamp = Instant.now().toString();
+            JSONObject document = new JSONObject();
+            JSONObject fields = new JSONObject();
+    
+            // Add lastUpdated field
+            fields.put("lastUpdated", new JSONObject().put("stringValue", timeStamp));
+    
+            // Add participants array
+            JSONArray participantsArray = new JSONArray();
+            participantsArray.put(new JSONObject().put("stringValue", userId));
+            participantsArray.put(new JSONObject().put("stringValue", userId));
+            fields.put("participants", new JSONObject().put("arrayValue", new JSONObject().put("values", participantsArray)));
+    
+            // Add fields to document
+            document.put("fields", fields);
+    
+            // Write data to the output stream
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = document.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+    
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                System.out.println("Messages subcollection created successfully.");
+                initializeFirstMessage(userId, userToken);
+
+            } else {
+                System.out.println("Failed to create messages subcollection in Firestore. Response Code: " + responseCode);
+                BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String errorResponse = errorReader.lines().collect(Collectors.joining());
+                System.out.println("Error Response: " + errorResponse);
+            }
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    // Method to initialize messages subcollection upon sign up with the first welcome message
+    public void initializeFirstMessage(String userId, String userToken) throws Exception {
+        // Set up the document path and URL for the Firestore request
+        String userIdCombination = userId + "_" + userId;
+        String firestoreUrl = String.format("https://firestore.googleapis.com/v1/projects/%s/databases/(default)/documents/users/%s/messages/%s/chat",
+                                            FIREBASE_PROJECT_ID, userId, userIdCombination);
+        URI uri = URI.create(firestoreUrl);
+        URL url = uri.toURL();
+
+        System.out.println("Firestore Messages URL: " + firestoreUrl);
+
+        HttpURLConnection connection = null;
+
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + userToken);
+            connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            // Create JSON payload for the welcome message
+            String timeStamp = Instant.now().toString();
+            JSONObject document = new JSONObject();
+            JSONObject fields = new JSONObject();
+
+            // Add sender, receiver, text, and timestamp fields
+            fields.put("sender", new JSONObject().put("stringValue", userId));
+            fields.put("receiver", new JSONObject().put("stringValue", userId));
+            fields.put("text", new JSONObject().put("stringValue", "Welcome to Ka-Talk!"));
+            fields.put("timestamp", new JSONObject().put("stringValue", timeStamp));
+
+            // Add fields to document
+            document.put("fields", fields);
+
+            // Write data to the output stream
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = document.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                System.out.println("Welcome message created successfully.");
+            } else {
+                System.out.println("Failed to create chat subcollection in Firestore. Response Code: " + responseCode);
+                BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String errorResponse = errorReader.lines().collect(Collectors.joining());
+                System.out.println("Error Response: " + errorResponse);
+            }
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
 
     // Method to handle user sign-in (login)
     public Map<String, String> signIn(String email, String password) throws Exception {
@@ -314,12 +436,6 @@ public class FirebaseService {
         connectionGet.disconnect();
     }
 
-
-
-
-
-
-
     // Method to fetch current user from Firestore
     public void fetchUserDetails(String userId, String idToken) throws Exception {
         String firestoreUrl = String.format("https://firestore.googleapis.com/v1/projects/" + FIREBASE_PROJECT_ID + "/databases/(default)/documents/users/" + userId);
@@ -357,12 +473,11 @@ public class FirebaseService {
         connection.disconnect();
     }
 
-            private static final String FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages";
-
-     public boolean sendMessage(Map<String, Object> messageData) {
-    String url = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages"; // Ensure this path is correct
+    public boolean sendMessage(Map<String, Object> messageData) {
+    String url2 = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/messages"; // Ensure this path is correct
     try {
-        URL obj = new URL(url);
+        URI uri = URI.create(url2);
+        URL obj = uri.toURL();
         HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken());
@@ -417,43 +532,35 @@ public class FirebaseService {
     }
     return false;
 }
-        public String getUserUidByName(String fullName) {
-            User user = AuthenticationService.getUserByFullName(fullName);
-            if (user != null) {
-                return user.getUid(); // Assuming User has a getUid() method
+
+    public String sendHttpGetRequest(String urlString) throws Exception {
+        // Create a URL object
+        URI uri = URI.create(urlString);
+        URL url = uri.toURL();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Set request method to GET
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken());
+
+        // Get response code and handle response
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            // Read response from the input stream
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
-            return null; // Return null if user not found
+            in.close();
+
+            return response.toString();
+        } else {
+            throw new Exception("GET request failed. Response code: " + responseCode);
         }
-
-
-
-        public String sendHttpGetRequest(String urlString) throws Exception {
-            // Create a URL object
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            // Set request method to GET
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Bearer " + UserSession.getIdToken());
-
-            // Get response code and handle response
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Read response from the input stream
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                return response.toString();
-            } else {
-                throw new Exception("GET request failed. Response code: " + responseCode);
-            }
-        }
-
+    }
+     
 
 }
