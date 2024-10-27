@@ -36,6 +36,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -48,13 +49,22 @@ import javafx.stage.Stage;
 
 public class ChatMainController extends Application {
 
-    
 
     @FXML
     private VBox userContainer;
 
+
+    @FXML
+    private Circle selectedUserSideProfile;
+
+
+    @FXML
+    private Label selectedUserSideLabel;
+
+
     @FXML
     private VBox userBarContainer;
+
 
     @FXML
     private ScrollPane userScrollPane;
@@ -293,7 +303,8 @@ public class ChatMainController extends Application {
     
 
     public void selectUser(String userId, String profilePicUrl, String fullName) {
-        selectedUserLabel.setText(fullName); // Update the label with the selected user's name
+        selectedUserLabel.setText(fullName); 
+        selectedUserSideLabel.setText(fullName);
 
         // Initialize SelectedUser with the selected user's data
         SelectedUser.startSession(userId, fullName, profilePicUrl);
@@ -303,12 +314,17 @@ public class ChatMainController extends Application {
             try {
                 Image profileImage = new Image(profilePicUrl);
                 Platform.runLater(() -> selectedUserProfile.setFill(new ImagePattern(profileImage)));
+
+                Image profileSideImage = new Image(profilePicUrl);
+                Platform.runLater(() -> selectedUserSideProfile.setFill(new ImagePattern(profileSideImage)));
+
             } catch (Exception e) {
                 System.out.println("Error loading selected user's profile picture: " + e.getMessage());
             }
         } else {
             // Set a default image or clear the ImageView if no URL is available
             Platform.runLater(() -> selectedUserProfile.setFill(new ImagePattern(null)));
+            Platform.runLater(() -> selectedUserSideProfile.setFill(new ImagePattern(null)));
         }
         
         String currentUserId = UserSession.getUserId();
@@ -343,7 +359,7 @@ public class ChatMainController extends Application {
                 }
             });
         }
-    }, 0, 5000); // Poll every 5 seconds
+    }, 0, 1000); // Poll every 5 seconds
 }
    
     private String sendHttpGetRequest(String urlString) throws Exception {
@@ -473,38 +489,69 @@ public class ChatMainController extends Application {
     
 
     private Pane createMessagePane(String sender, String messageText, String timestamp, boolean isSender) {
-        Pane messagePane = new Pane();
-        messagePane.setPrefSize(300.0, 60.0);
-        messagePane.setStyle("-fx-padding: 10;");
-    
-        // Create Circle for placeholder profile picture
+        String profilePictureUrl;
+
+        // Main container to align message left or right
+        HBox messageBox = new HBox();
+        messageBox.setFillHeight(true);
+        messageBox.setSpacing(10);  // Space between profile picture and message
+        messageBox.setPrefWidth(Double.MAX_VALUE - 100);  // Make message pane take full width
+        messageBox.setAlignment(isSender ? javafx.geometry.Pos.CENTER_RIGHT : javafx.geometry.Pos.CENTER_LEFT);
+
+        // Profile picture placeholder
         Circle profilePic = new Circle(20.0);
         profilePic.setStroke(Color.BLACK);
         profilePic.setStrokeType(StrokeType.INSIDE);
-        profilePic.setLayoutX(isSender ? 260.0 : 20.0);  // Position depending on sender/receiver
-        profilePic.setLayoutY(30.0);
-        profilePic.setFill(isSender ? Color.BLUE : Color.GRAY);  // Placeholder colors
-    
-        // Create message label
+        profilePic.setFill(isSender ? Color.BLUE : Color.GRAY);  // Placeholder color for sender/receiver
+
+        if(isSender){
+            profilePictureUrl = UserSession.getUserPhotoUrl();
+        } else {
+            profilePictureUrl = SelectedUser.getUserPhotoUrl();
+        }
+
+        if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
+            new Thread(() -> {
+                try {
+                    Image profilePhoto = new Image(profilePictureUrl, false); // Load image in background
+                    Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
+                } catch (Exception e) {
+                    System.out.println("Error loading profile photo: " + e.getMessage());
+                }
+            }).start();
+        }
+
+        // Container for message content (text and timestamp)
+        VBox messageContent = new VBox();
+        messageContent.setSpacing(2);
+        messageContent.setMaxWidth(400);  // Limit max width of message content for readability
+
+        // Message label
         Label messageLabel = new Label(messageText);
         messageLabel.setWrapText(true);
-        messageLabel.setLayoutX(isSender ? 120.0 : 50.0);  // Adjust based on sender/receiver
-        messageLabel.setLayoutY(20.0);
         messageLabel.setFont(new Font("Arial", 14.0));
-        messageLabel.setStyle(isSender ? "-fx-background-color: lightblue; -fx-padding: 5;" : "-fx-background-color: lightgray; -fx-padding: 5;");
-    
-        // Create timestamp label
+        messageLabel.setStyle(isSender ? "-fx-background-color: lightblue; -fx-padding: 8; -fx-background-radius: 10;"
+                                        : "-fx-background-color: lightgray; -fx-padding: 8; -fx-background-radius: 10;");
+        messageLabel.setMaxWidth(400);  // Restrict message width to keep content readable
+
+        // Timestamp label
         Label timestampLabel = new Label(formatTimestamp(timestamp));
-        timestampLabel.setLayoutX(isSender ? 120.0 : 50.0);
-        timestampLabel.setLayoutY(50.0);
         timestampLabel.setFont(new Font("Arial", 10.0));
         timestampLabel.setTextFill(Color.GRAY);
-    
-        // Add elements to the message pane
-        messagePane.getChildren().addAll(profilePic, messageLabel, timestampLabel);
-    
-        return messagePane;
+
+        // Add message text and timestamp to message content
+        messageContent.getChildren().addAll(messageLabel, timestampLabel);
+
+        // Add profile pic and message content to message box
+        if (isSender) {
+            messageBox.getChildren().addAll(messageContent, profilePic);  // Sender message aligned right
+        } else {
+            messageBox.getChildren().addAll(profilePic, messageContent);  // Receiver message aligned left
+        }
+
+        return messageBox;
     }
+
 
     private String formatTimestamp(String timestamp) {
         Instant instant = Instant.parse(timestamp);

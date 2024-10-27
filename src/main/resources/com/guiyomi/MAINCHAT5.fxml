@@ -75,7 +75,7 @@
                   </ScrollPane>
                </children>
             </VBox>
-            <VBox prefHeight="800.0" prefWidth="546.0" HBox.hgrow="ALWAYS">
+            <VBox prefHeight="800.0" HBox.hgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="65.0" prefWidth="545.0">
                      <children>
@@ -96,7 +96,7 @@
                   </HBox>
                   <ScrollPane fx:id="messageScrollPane" prefHeight="684.0" prefWidth="545.0" styleClass="hidden-scrollbars" VBox.vgrow="ALWAYS">
                      <content>
-                        <VBox fx:id="messageContainer" prefHeight="934.0" prefWidth="545.0" />
+                        <VBox fx:id="messageContainer" />
                      </content></ScrollPane>
                   <HBox alignment="CENTER" prefHeight="53.0" prefWidth="545.0">
                      <children>
@@ -136,8 +136,8 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="327.0" prefWidth="262.0" styleClass="PaneBottomShadow">
                      <children>
-                        <Circle fill="WHITE" radius="84.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="0.0" styleClass="circle-shadow" />
-                        <Label text="Name Placeholder" textFill="WHITE">
+                        <Circle fx:id="selectedUserSideProfile" fill="WHITE" radius="84.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="0.0" styleClass="circle-shadow" />
+                        <Label fx:id="selectedUserSideLabel" text="Name Placeholder" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="19.0" />
                            </font>
