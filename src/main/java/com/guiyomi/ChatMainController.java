@@ -5,13 +5,17 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
-import java.net.URI;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,10 +44,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
 
 
 public class ChatMainController extends Application {
@@ -92,7 +92,7 @@ public class ChatMainController extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("MainChat.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("MAINCHAT5.fxml"));
             primaryStage.setTitle("KaTalk");
             primaryStage.setScene(new Scene(root));
             primaryStage.show();

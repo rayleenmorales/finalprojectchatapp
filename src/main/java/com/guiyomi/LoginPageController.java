@@ -1,6 +1,7 @@
 package com.guiyomi;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import java.util.Map;
 
 public class LoginPageController {
     @FXML
@@ -62,7 +62,7 @@ public class LoginPageController {
                 UserSession.startSession(uid, UserSession.getUserName(), UserSession.getUserPhotoUrl(), idToken);
 
                 // If login is successful, load MainChat.fxml
-                Parent chatMainParent = FXMLLoader.load(getClass().getResource("MainChat.fxml"));
+                Parent chatMainParent = FXMLLoader.load(getClass().getResource("MAINCHAT5.fxml"));
                 Scene chatMainScene = new Scene(chatMainParent);
 
                 // Get the stage information
