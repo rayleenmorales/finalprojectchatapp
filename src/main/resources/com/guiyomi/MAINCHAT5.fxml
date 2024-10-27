@@ -13,9 +13,9 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@RAYLEENPUSH2/finalprojectchatapp/src/main/resources/com/guiyomi/stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.ChatMainController">
    <left>
-      <VBox fx:id="userContainer" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="209.0" styleClass="white-background-pane" BorderPane.alignment="CENTER">
+      <VBox fx:id="userBarContainer" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="209.0" styleClass="white-background-pane" BorderPane.alignment="CENTER">
          <children>
             <VBox alignment="CENTER" prefHeight="309.0" prefWidth="210.0" styleClass="PaneBottomShadow" VBox.vgrow="ALWAYS">
                <children>
@@ -68,9 +68,9 @@
                         </Button>
                      </children>
                   </HBox>
-                  <ScrollPane fx:id="userScrollPane" prefHeight="735.0" prefWidth="285.0" styleClass="hidden-scrollbars" VBox.vgrow="ALWAYS">
+                  <ScrollPane fx:id="userScrollPane" hbarPolicy="NEVER" prefWidth="284.0" styleClass="hidden-scrollbars" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                      <content>
-                        <VBox fx:id="userContainer" prefHeight="66.0" prefWidth="285.0" />
+                        <VBox fx:id="userContainer" prefWidth="284.0" />
                      </content>
                   </ScrollPane>
                </children>
@@ -94,7 +94,10 @@
                         </Label>
                      </children>
                   </HBox>
-                  <ScrollPane fx:id="messageScrollPane" prefHeight="684.0" prefWidth="545.0" styleClass="hidden-scrollbars" VBox.vgrow="ALWAYS" />
+                  <ScrollPane fx:id="messageScrollPane" prefHeight="684.0" prefWidth="545.0" styleClass="hidden-scrollbars" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox fx:id="messageContainer" prefHeight="934.0" prefWidth="545.0" />
+                     </content></ScrollPane>
                   <HBox alignment="CENTER" prefHeight="53.0" prefWidth="545.0">
                      <children>
                         <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="35.0" styleClass="buttonBACK" HBox.hgrow="ALWAYS">

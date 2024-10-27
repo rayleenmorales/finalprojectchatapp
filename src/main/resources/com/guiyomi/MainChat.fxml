@@ -14,7 +14,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="chatMainRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.ChatMainController">
+<AnchorPane fx:id="chatMainRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.guiyomi.ChatMainController">
    <children>
       <AnchorPane prefHeight="800.0" prefWidth="1300.0">
          <children>
@@ -85,7 +85,7 @@
                               </HBox>
                               
                               <Separator prefHeight="6.0" prefWidth="310.0" />
-                              <ScrollPane fx:id="userScrollPane" fitToWidth="true" styleClass="scroll-pane">
+                              <ScrollPane fx:id="userScrollPane" fitToWidth="true" prefHeight="394.0" prefWidth="281.0" styleClass="scroll-pane">
                                  <VBox fx:id="userContainer" spacing="10.0">
                                     <!-- User items will be added here -->
                                  </VBox>

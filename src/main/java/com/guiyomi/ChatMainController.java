@@ -53,6 +53,12 @@ public class ChatMainController extends Application {
     @FXML
     private VBox userContainer;
 
+    @FXML
+    private VBox userBarContainer;
+
+    @FXML
+    private ScrollPane userScrollPane;
+
 
     @FXML
     private ScrollPane messageScrollPane;
