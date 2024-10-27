@@ -94,9 +94,9 @@
                         </Label>
                      </children>
                   </HBox>
-                  <ScrollPane fx:id="messageScrollPane" prefHeight="684.0" prefWidth="545.0" styleClass="hidden-scrollbars" VBox.vgrow="ALWAYS">
+                  <ScrollPane fx:id="messageScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="684.0" prefWidth="545.0" styleClass="hidden-scrollbars" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                      <content>
-                        <VBox fx:id="messageContainer" />
+                        <VBox fx:id="messageContainer" prefHeight="684.0" prefWidth="545.0" HBox.hgrow="ALWAYS" />
                      </content></ScrollPane>
                   <HBox alignment="CENTER" prefHeight="53.0" prefWidth="545.0">
                      <children>

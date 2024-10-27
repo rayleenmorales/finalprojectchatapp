@@ -38,6 +38,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -45,6 +46,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import java.util.HashMap;
+import java.util.Map;
+
 
 
 public class ChatMainController extends Application {
@@ -104,6 +108,7 @@ public class ChatMainController extends Application {
 
     FirebaseService firebaseService = new FirebaseService();
     private Timer messagePollingTimer;
+    private Map<String, Image> profileImageCache = new HashMap<>();
 
     @Override
     public void start(Stage primaryStage) {
@@ -359,7 +364,7 @@ public class ChatMainController extends Application {
                 }
             });
         }
-    }, 0, 1000); // Poll every 5 seconds
+    }, 0, 5000); // Poll every 5 seconds
 }
    
     private String sendHttpGetRequest(String urlString) throws Exception {
@@ -485,73 +490,70 @@ public class ChatMainController extends Application {
     }
 }
 
-    
-    
-
     private Pane createMessagePane(String sender, String messageText, String timestamp, boolean isSender) {
         String profilePictureUrl;
-
-        // Main container to align message left or right
+        
         HBox messageBox = new HBox();
+        messageBox.setStyle("-fx-padding: 10");
         messageBox.setFillHeight(true);
-        messageBox.setSpacing(10);  // Space between profile picture and message
-        messageBox.setPrefWidth(Double.MAX_VALUE - 100);  // Make message pane take full width
+        messageBox.setSpacing(10);
+        messageBox.setPrefWidth(Double.MAX_VALUE);
         messageBox.setAlignment(isSender ? javafx.geometry.Pos.CENTER_RIGHT : javafx.geometry.Pos.CENTER_LEFT);
+        HBox.setHgrow(messageBox, Priority.ALWAYS);
 
-        // Profile picture placeholder
         Circle profilePic = new Circle(20.0);
         profilePic.setStroke(Color.BLACK);
         profilePic.setStrokeType(StrokeType.INSIDE);
-        profilePic.setFill(isSender ? Color.BLUE : Color.GRAY);  // Placeholder color for sender/receiver
 
-        if(isSender){
-            profilePictureUrl = UserSession.getUserPhotoUrl();
-        } else {
-            profilePictureUrl = SelectedUser.getUserPhotoUrl();
-        }
+        // Set profile picture URL based on sender/receiver status
+        profilePictureUrl = isSender ? UserSession.getUserPhotoUrl() : SelectedUser.getUserPhotoUrl();
 
         if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
-            new Thread(() -> {
-                try {
-                    Image profilePhoto = new Image(profilePictureUrl, false); // Load image in background
-                    Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
-                } catch (Exception e) {
-                    System.out.println("Error loading profile photo: " + e.getMessage());
-                }
-            }).start();
+            // Check if image is already in cache
+            if (profileImageCache.containsKey(profilePictureUrl)) {
+                profilePic.setFill(new ImagePattern(profileImageCache.get(profilePictureUrl)));
+            } else {
+                // If not in cache, load and cache the image
+                new Thread(() -> {
+                    try {
+                        Image profilePhoto = new Image(profilePictureUrl, false);
+                        profileImageCache.put(profilePictureUrl, profilePhoto);  // Cache the image
+                        Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
+                    } catch (Exception e) {
+                        System.out.println("Error loading profile photo: " + e.getMessage());
+                    }
+                }).start();
+            }
+        } else {
+            // Fallback color for empty URL
+            profilePic.setFill(isSender ? Color.BLUE : Color.GRAY);
         }
 
-        // Container for message content (text and timestamp)
         VBox messageContent = new VBox();
         messageContent.setSpacing(2);
-        messageContent.setMaxWidth(400);  // Limit max width of message content for readability
+        messageContent.setMaxWidth(400);
 
-        // Message label
         Label messageLabel = new Label(messageText);
         messageLabel.setWrapText(true);
         messageLabel.setFont(new Font("Arial", 14.0));
         messageLabel.setStyle(isSender ? "-fx-background-color: lightblue; -fx-padding: 8; -fx-background-radius: 10;"
                                         : "-fx-background-color: lightgray; -fx-padding: 8; -fx-background-radius: 10;");
-        messageLabel.setMaxWidth(400);  // Restrict message width to keep content readable
+        messageLabel.setMaxWidth(400);
 
-        // Timestamp label
         Label timestampLabel = new Label(formatTimestamp(timestamp));
         timestampLabel.setFont(new Font("Arial", 10.0));
         timestampLabel.setTextFill(Color.GRAY);
 
-        // Add message text and timestamp to message content
         messageContent.getChildren().addAll(messageLabel, timestampLabel);
 
-        // Add profile pic and message content to message box
         if (isSender) {
-            messageBox.getChildren().addAll(messageContent, profilePic);  // Sender message aligned right
+            messageBox.getChildren().addAll(messageContent, profilePic);
         } else {
-            messageBox.getChildren().addAll(profilePic, messageContent);  // Receiver message aligned left
+            messageBox.getChildren().addAll(profilePic, messageContent);
         }
 
         return messageBox;
     }
-
 
     private String formatTimestamp(String timestamp) {
         Instant instant = Instant.parse(timestamp);
