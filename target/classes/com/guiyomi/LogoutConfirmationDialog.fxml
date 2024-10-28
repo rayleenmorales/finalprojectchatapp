@@ -5,14 +5,23 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<DialogPane xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #fff; -fx-border-color: #ccc;">
+<DialogPane fx:id="dialogPane"
+            xmlns:fx="http://javafx.com/fxml" 
+            style="-fx-background-color: #fff; -fx-border-color: #ccc;" 
+           >
+    
     <content>
         <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-            <Label text="Are you sure you want to log out?" style="-fx-font-size: 14px; -fx-text-fill: #333;" />
+            <!-- Adding fx:id to Label for potential access in the controller -->
+            <Label fx:id="confirmationLabel" 
+                   text="Are you sure you want to log out?" 
+                   style="-fx-font-size: 14px; -fx-text-fill: #333;" />
         </VBox>
     </content>
+
     <buttonTypes>
-        <ButtonType text="Yes" buttonData="YES" />
-        <ButtonType text="No" buttonData="NO" />
+        <!-- Adding fx:id to buttons for reference in the controller -->
+        <ButtonType fx:id="yesButton" text="Yes" buttonData="YES" />
+        <ButtonType fx:id="noButton" text="No" buttonData="NO" />
     </buttonTypes>
 </DialogPane>

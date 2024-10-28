@@ -160,57 +160,113 @@ public class ChatMainController extends Application {
         populateUserListWithHttp();
     }
 
-
-   @FXML
+    @FXML
     public void handleLogOutButton(ActionEvent event) throws Exception {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LogOutConfirmation(stage);
     }
 
     public void LogOutConfirmation(Stage stage) {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        DialogPane dPane = new DialogPane();
-        VBox content = new VBox(10);
-        dialog.setTitle("Logout Confirmation");
-        content.getChildren().add(new Label("Are you sure you want to log out?"));
-        dPane.setContent(content);
-        dPane.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
-        dPane.setGraphic(null);
-        dialog.setDialogPane(dPane);
+        try {
+            // Load the FXML file without specifying a controller
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("LogoutConfirmationDialog.fxml"));
+            DialogPane dialogPane = loader.load();
 
-        dialog.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES){
-                System.out.println("Proceed Logout.");
-                
-                try{
-                    //handle logout here
-                    String userId = UserSession.getUserId();
-                    String idToken = UserSession.getIdToken(); // Replace with the actual token
+            // Define button types
+            ButtonType yesButtonType = new ButtonType("Yes", ButtonType.YES.getButtonData());
+            ButtonType noButtonType = new ButtonType("No", ButtonType.NO.getButtonData());
 
-                    firebaseService.setUserLoggedInStatus(userId, false, idToken);
+            // Set up the dialog
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Logout Confirmation");
+            dialog.setDialogPane(dialogPane);
+            dialog.getDialogPane().getButtonTypes().setAll(yesButtonType, noButtonType);
 
-                    UserSession.endSession();
-                    SelectedUser.endSession();
+            // // Set result converter to capture button clicks
+            // dialog.setResultConverter(dialogButton -> {
+            //     System.out.println("Dialog button selected: " + dialogButton);
+            //     return dialogButton;
+            // });
 
-                    Parent root = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
-                    Scene scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.centerOnScreen();
-                    stage.show();
+            // Show the dialog and handle responses
+            dialog.showAndWait().ifPresent(response -> {
+                if (response == yesButtonType) {
+                    System.out.println("Proceeding with logout.");
+                    try {
+                        // Handle logout logic here
+                        String userId = UserSession.getUserId();
+                        String idToken = UserSession.getIdToken();
+
+                        firebaseService.setUserLoggedInStatus(userId, false, idToken);
+                        UserSession.endSession();
+                        SelectedUser.endSession();
+
+                        Parent root = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
+                        Scene scene = new Scene(root);
+                        stage.setScene(scene);
+                        stage.centerOnScreen();
+                        stage.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("Logout Failed.");
+                    }
+                } else if (response == noButtonType) {
+                    System.out.println("Logout Canceled.");
+                } else {
+                    System.out.println("Dialog closed without selection.");
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Logout Failed.");
-                }
-                
-            }
-            if (response == ButtonType.NO){
-                System.out.println("Logout Canceled.");
-            }
-        });
-        
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to load the logout confirmation dialog.");
+        }
     }
 
+    
+
+    // public void LogOutConfirmation(Stage stage) {
+    //     Dialog<ButtonType> dialog = new Dialog<>();
+    //     DialogPane dPane = new DialogPane();
+    //     VBox content = new VBox(10);
+    //     dialog.setTitle("Logout Confirmation");
+    //     content.getChildren().add(new Label("Are you sure you want to log out?"));
+    //     dPane.setContent(content);
+    //     dPane.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+    //     dPane.setGraphic(null);
+    //     dialog.setDialogPane(dPane);
+
+    //     dialog.showAndWait().ifPresent(response -> {
+    //         if (response == ButtonType.YES){
+    //             System.out.println("Proceed Logout.");
+                
+    //             try{
+    //                 //handle logout here
+    //                 String userId = UserSession.getUserId();
+    //                 String idToken = UserSession.getIdToken(); // Replace with the actual token
+
+    //                 firebaseService.setUserLoggedInStatus(userId, false, idToken);
+
+    //                 UserSession.endSession();
+    //                 SelectedUser.endSession();
+
+    //                 Parent root = FXMLLoader.load(getClass().getResource("LOGIN PAGE.fxml"));
+    //                 Scene scene = new Scene(root);
+    //                 stage.setScene(scene);
+    //                 stage.centerOnScreen();
+    //                 stage.show();
+    //             }
+    //             catch (Exception e) {
+    //                 e.printStackTrace();
+    //                 System.out.println("Logout Failed.");
+    //             }
+                
+    //         }
+    //         if (response == ButtonType.NO){
+    //             System.out.println("Logout Canceled.");
+    //         }
+    //     });
+        
+    // }
 
     private void populateUserListWithHttp() {
         String url = "https://firestore.googleapis.com/v1/projects/katalk-db42a/databases/(default)/documents/users";
