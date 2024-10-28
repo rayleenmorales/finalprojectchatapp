@@ -1,0 +1,35 @@
+/* Style for the DialogPane */
+.dialog-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+}
+
+/* Style for buttons within the DialogPane */
+.dialog-pane .button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 5 20;
+    -fx-cursor: hand;
+}
+
+/* Style specifically for the "Yes" button */
+.dialog-pane .button:default { /* Targets the button that has focus by default */
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button:focused {
+    -fx-background-color: #45a049;
+}
+
+/* Style specifically for the "No" button */
+.dialog-pane .button:not(:default) { /* Targets other buttons not in focus */
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button:not(:default):hover {
+    -fx-background-color: #d32f2f;
+}
