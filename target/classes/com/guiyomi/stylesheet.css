@@ -92,7 +92,7 @@
   -fx-border-radius: 30px;
   -fx-background-radius: 30px;
   -fx-text-fill: #ffffff;
-  -fx-fontweight: bold;
+  -fx-font-weight: 600;
   -fx-font-size: 18px;
   -fx-padding: 0 18px;
   -fx-min-height: 50px;
@@ -128,7 +128,7 @@
   -fx-border-radius: 30px;
   -fx-background-radius: 30px;
   -fx-text-fill: #ffffff;
-  -fx-fontweight: bold;
+  -fx-font-weight: 600;
   -fx-font-size: 30px;
   -fx-padding: 0 18px;
   -fx-min-height: 50px;
@@ -163,7 +163,7 @@
   -fx-border-radius: 16px; /* Half of 32px */
   -fx-background-radius: 16px; /* Half of 32px */
   -fx-text-fill: #ffffff;
-  -fx-fontweight: bold;
+  -fx-font-weight: 1000;
   -fx-font-size: 17px; /* Smaller font to fit in the button */
   -fx-padding: 0; /* No padding since we're fixing the height and width */
   -fx-min-height: 32px; /* Set height to 32px */
@@ -200,7 +200,7 @@
 -fx-border-radius: 16px; /* Half of 32px */
 -fx-background-radius: 16px; /* Half of 32px */
 -fx-text-fill: #ffffff;
--fx-fontweight: bold;
+-fx-font-weight: 1000;
 -fx-font-size: 17px; /* Smaller font to fit in the button */
 -fx-padding: 0; /* No padding since we're fixing the height and width */
 -fx-min-height: 32px; /* Set height to 32px */
@@ -265,7 +265,7 @@
   -fx-border-radius: 30px;
   -fx-background-radius: 30px;
   -fx-text-fill: #6a7bdd;
-  -fx-fontweight: bold;
+  -fx-font-weight: 600;
   -fx-font-size: 18px;
   -fx-padding: 0;
   -fx-min-height: 50px;
@@ -309,7 +309,7 @@
 -fx-border-radius: 16px; /* Half of 32px */
 -fx-background-radius: 16px; /* Half of 32px */
 -fx-text-fill: #ffffff;
--fx-fontweight: bold;
+-fx-font-weight: 1000;
 -fx-font-size: 17px; /* Smaller font to fit in the button */
 -fx-padding: 0; /* No padding since we're fixing the height and width */
 -fx-min-height: 32px; /* Set height to 32px */
