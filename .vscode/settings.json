@@ -1,0 +1,5 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "css.validate": false,
+    "java.compile.nullAnalysis.mode": "disabled",
+}
