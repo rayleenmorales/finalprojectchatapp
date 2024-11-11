@@ -112,8 +112,10 @@ public class ChatMainController {
 
     private AnimationTimer userUpdateLoop;
     private AnimationTimer messageUpdateLoop;
+    
     private ArrayList<JsonObject> updateUsers = new ArrayList<>();
     private Map<String, Pane> userPaneMap = new HashMap<>();
+
     private ArrayList<JsonObject> updateMessage = new ArrayList<>();
     private Map<String, Pane> messagePaneMap = new HashMap<>();
     private int lastMessageCount = 0; 
@@ -382,7 +384,9 @@ public class ChatMainController {
     public void selectUser(User user) {
         this.selectedUser = user;
         // Clear previous messages for the selected conversation
+        messagePaneMap.clear();
         messageContainer.getChildren().clear();
+        lastMessageCount = 0;
 
         // Set selected user information
         selectedUserLabel.setText(user.getUserName());
@@ -454,14 +458,19 @@ public class ChatMainController {
                 String receiverId = messageJson.get("receiverId").getAsString();
                 String content = messageJson.get("content").getAsString();
                 String timestamp = messageJson.get("timestamp").getAsString();
-    
+   
                 // Determine if the current user is the sender or receiver
                 boolean isSender = senderId.equals(user.getLocalID());
                 boolean isReceiver = receiverId.equals(user.getLocalID());
     
-                if (isSender || isReceiver) {    
-                    // Create the message pane, passing null for profile image if not found
-                    Pane messagePane = createMessagePane(user, content, timestamp, isSender);
+                if (isSender || isReceiver) {
+                    Pane messagePane;
+                    if(isSender){
+                        messagePane = createMessagePane(user, content, timestamp, isSender);
+                    } else {
+                        messagePane = createMessagePane(selectedUser, content, timestamp, isSender); 
+                    }
+
                     messagePaneMap.put(messageId, messagePane);
                     messageContainer.getChildren().add(messagePane);  // Append to the UI
                     newMessageAdded = true; // A new message was added
@@ -481,7 +490,7 @@ public class ChatMainController {
     }
     
     
-    public Pane createMessagePane(User selectedUser, String messageText, String timestamp, boolean isSender) {
+    public Pane createMessagePane(User messengerUser, String messageText, String timestamp, boolean isSender) {
         HBox messageBox = new HBox();
         messageBox.setStyle("-fx-padding: 10");
         messageBox.setFillHeight(true);
@@ -492,7 +501,7 @@ public class ChatMainController {
     
         // Only create profilePic Circle if profilePictureUrl is provided
         Circle profilePic = new Circle(20.0);
-        Image profilePhoto = selectedUser.getProfilePicture();
+        Image profilePhoto = messengerUser.getProfilePicture();
         Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
                     
         // Add profilePic to messageBox
