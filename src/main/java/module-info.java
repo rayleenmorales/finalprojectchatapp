@@ -12,7 +12,7 @@ module com.guiyomi {
     requires com.google.api.client;
     requires transitive com.google.gson;
     requires org.checkerframework.checker.qual;
-    requires java.desktop;
+    requires transitive java.desktop;
 	requires javafx.base;
 
     opens com.guiyomi to javafx.fxml;
