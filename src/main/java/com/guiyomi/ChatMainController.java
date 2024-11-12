@@ -353,7 +353,8 @@ public class ChatMainController {
     }
 
     private void updateUserPane(Pane userPane, boolean isLogged) {
-        Label activeLabel = (Label) userPane.getChildren().get(3);
+        Label activeLabel = new Label(isLogged ? "Active" : "Offline");
+            activeLabel.setId("activeLabel");
 
         String currentStatus = activeLabel.getText();
         String newStatus = isLogged ? "Active" : "Offline";
