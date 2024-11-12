@@ -9,6 +9,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.io.File;
+import java.io.IOException;
+import java.awt.Desktop;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -17,11 +20,13 @@ import com.google.gson.JsonObject;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,10 +35,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.application.Platform;
 
 public class ChatMainController {
@@ -438,59 +449,348 @@ public class ChatMainController {
 
     @FXML
     public void handleAttachmentButton(ActionEvent event) {
-        // Implement attachment handling here
-        System.out.println("Attachment button clicked.");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+            new ExtensionFilter("All Files", "*.*"),
+            new ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+            new ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov"),
+            new ExtensionFilter("Documents", "*.pdf", "*.docx", "*.txt")
+        );
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            cacheUploadAndSendAttachment(selectedFile);
+        }
     }
+
+    public void cacheUploadAndSendAttachment (File file) {
+        // Upload the file to Firebase Storage and get the download URL
+        String downloadURL = Firebase.uploadFile(user.getTokenID(), file);
+
+        // Cache the file locally for future use
+        CacheHelper.cacheFile(file);
+
+        // Send the download URL to Realtime Database as a message
+        if (downloadURL != null) {
+            // Create the message object with necessary fields
+            String messageId = generateUniqueMessageId();
+            JsonObject message = new JsonObject();
+            message.addProperty("senderId", user.getLocalID());  // Local user ID as sender
+            message.addProperty("receiverId", selectedUser.getLocalID());   // Selected user as receiver
+            message.addProperty("content", downloadURL);
+            message.addProperty("timestamp", System.currentTimeMillis());
+            message.addProperty("messageId", messageId);
+
+            Firebase.putMessage(user.getTokenID(), getCurrentConversationId(), message);
+        } else {
+            System.out.println("Error uploading file to Firebase Storage.");
+        }
+
+        // Clear the message field after sending
+        messageField.clear();
+    }   
 
     private void updateMessageContainer(ArrayList<JsonObject> newMessages, User selectedUser) {
         System.out.println("Updating message container with " + newMessages.size() + " messages.");
     
-        // Sort messages by their timestamp in ascending order (oldest to latest)
         newMessages.sort(Comparator.comparingLong(message -> message.get("timestamp").getAsLong()));
     
-        boolean newMessageAdded = false; // Track if a new message is added
+        boolean newMessageAdded = false;
     
         for (JsonObject messageJson : newMessages) {
             String messageId = messageJson.get("messageId").getAsString();
     
             if (!messagePaneMap.containsKey(messageId)) {
                 String senderId = messageJson.get("senderId").getAsString();
-                String receiverId = messageJson.get("receiverId").getAsString();
                 String content = messageJson.get("content").getAsString();
                 String timestamp = messageJson.get("timestamp").getAsString();
-   
-                // Determine if the current user is the sender or receiver
-                boolean isSender = senderId.equals(user.getLocalID());
-                boolean isReceiver = receiverId.equals(user.getLocalID());
     
-                if (isSender || isReceiver) {
-                    Pane messagePane;
-                    if(isSender){
-                        messagePane = createMessagePane(user, content, timestamp, isSender);
-                    } else {
-                        messagePane = createMessagePane(selectedUser, content, timestamp, isSender); 
-                    }
-
-                    messagePaneMap.put(messageId, messagePane);
-                    messageContainer.getChildren().add(messagePane);  // Append to the UI
-                    newMessageAdded = true; // A new message was added
+                boolean isSender = senderId.equals(user.getLocalID());
+                User messageUser = isSender ? user : selectedUser;
+    
+                Pane messagePane;
+                if (isMediaMessage(content)) { // Check if the content is a media URL
+                    System.out.println("Creating media message pane for: " + content);
+                    messagePane = createMediaMessagePane(messageUser, content, timestamp, isSender);
+                } else {
+                    System.out.println("Creating text message pane for: " + content);
+                    messagePane = createTextMessagePane(messageUser, content, timestamp, isSender);
                 }
+    
+                messagePaneMap.put(messageId, messagePane);
+                messageContainer.getChildren().add(messagePane);
+                newMessageAdded = true;
             }
         }
     
-        // Check if a new message was added and the message count has increased
         if (newMessageAdded && messageContainer.getChildren().size() > lastMessageCount) {
-            // Scroll to the bottom of the message container to show the latest messages
             messageScrollPane.layout();
             messageScrollPane.setVvalue(1.0);
         }
-    
-        // Update lastMessageCount to the current message count
         lastMessageCount = messageContainer.getChildren().size();
     }
     
+    private boolean isMediaMessage(String content) {
+        if (content.startsWith("http")) {
+            // Extract the URL path without query parameters
+            String path = content.split("\\?")[0].toLowerCase();
+            
+            // Check if the path ends with a known media file extension
+            return path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg") || 
+                   path.endsWith(".gif") || path.endsWith(".mp4") || path.endsWith(".avi") || 
+                   path.endsWith(".pdf") || path.endsWith(".docx") || path.endsWith(".txt");
+        }
+        return false;
+    }    
     
-    public Pane createMessagePane(User messengerUser, String messageText, String timestamp, boolean isSender) {
+    
+    private Pane createMediaMessagePane(User user, String mediaUrl, String timestamp, boolean isSender) {
+        // Strip query parameters from URL by splitting at "?"
+        String path = mediaUrl.split("\\?")[0].toLowerCase();
+    
+        if (path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".gif")) {
+            System.out.println("Creating image message pane for: " + mediaUrl);
+            return createImageMessagePane(user, mediaUrl, timestamp, isSender);
+        } else if (path.endsWith(".mp4") || path.endsWith(".avi")) {
+            System.out.println("Creating video message pane for: " + mediaUrl);
+            return createVideoMessagePane(user, mediaUrl, timestamp, isSender);
+        } else {
+            System.out.println("Creating attachment message pane for: " + mediaUrl);
+            return createAttachmentMessagePane(user, mediaUrl, timestamp, isSender);
+        }
+    }
+    
+
+    private Pane createImageMessagePane(User user, String imageUrl, String timestamp, boolean isSender) {
+        HBox messageBox = new HBox();
+        messageBox.setStyle("-fx-padding: 10");
+        messageBox.setFillHeight(true);
+        messageBox.setSpacing(10);
+        messageBox.setPrefWidth(Double.MAX_VALUE);
+        messageBox.setAlignment(isSender ? javafx.geometry.Pos.CENTER_RIGHT : javafx.geometry.Pos.CENTER_LEFT);
+        HBox.setHgrow(messageBox, Priority.ALWAYS);
+
+        // Only create profilePic Circle if profilePictureUrl is provided
+        Circle profilePic = new Circle(20.0);
+        Image profilePhoto = user.getProfilePicture();
+        Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
+                    
+        // Add profilePic to messageBox
+        if (isSender) {
+            messageBox.getChildren().add(profilePic);
+        } else {
+            messageBox.getChildren().add(0, profilePic);
+        }
+
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(200);
+        imageView.setPreserveRatio(true);
+
+        // Get the cached file path for the image
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Image cachedImage = CacheHelper.getCachedImage(imageUrl);
+            Platform.runLater(() -> imageView.setImage(cachedImage));
+        }
+
+        VBox messageContent = new VBox();
+        messageContent.setSpacing(2);
+        messageContent.setMaxWidth(400);
+        messageContent.getChildren().add(imageView);
+
+        Label timestampLabel = new Label(formatTimestamp(timestamp));
+        timestampLabel.setFont(new Font("Arial", 10.0));
+        timestampLabel.setTextFill(Color.GRAY);
+        messageContent.getChildren().add(timestampLabel);
+
+        if (isSender) {
+            messageBox.getChildren().add(0, messageContent);  // Add at the beginning if receiver
+            
+        } else {
+            messageBox.getChildren().add(messageContent);  // Add at the end if sender
+        }
+
+        return messageBox;
+    }
+
+
+    private Pane createVideoMessagePane(User user, String videoUrl, String timestamp, boolean isSender) {
+        HBox messageBox = new HBox();
+        messageBox.setStyle("-fx-padding: 10");
+        messageBox.setFillHeight(true);
+        messageBox.setSpacing(10);
+        messageBox.setPrefWidth(Double.MAX_VALUE);
+        messageBox.setAlignment(isSender ? javafx.geometry.Pos.CENTER_RIGHT : javafx.geometry.Pos.CENTER_LEFT);
+        HBox.setHgrow(messageBox, Priority.ALWAYS);
+
+        // Profile picture for the sender or receiver
+        Circle profilePic = new Circle(20.0);
+        Image profilePhoto = user.getProfilePicture();
+        Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
+
+        if (isSender) {
+            messageBox.getChildren().add(profilePic);
+        } else {
+            messageBox.getChildren().add(0, profilePic);
+        }
+
+        // Media setup
+        Media media = CacheHelper.getCachedVideo(videoUrl);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView.setFitWidth(300);
+        mediaView.setPreserveRatio(true);
+        mediaPlayer.setAutoPlay(false);
+
+        // Toggle Play/Pause Button
+        Button playPauseButton = new Button("Play");
+        playPauseButton.setOnAction(e -> {
+            if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                mediaPlayer.pause();
+                playPauseButton.setText("Play");
+            } else {
+                mediaPlayer.play();
+                playPauseButton.setText("Pause");
+            }
+        });
+
+        // Volume Button with Slider
+        Button volumeButton = new Button("🔊");
+        Slider volumeSlider = new Slider(0, 1, 0.5); // Ranges from 0 (mute) to 1 (full volume)
+        volumeSlider.setOrientation(Orientation.VERTICAL);
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> mediaPlayer.setVolume(newValue.doubleValue()));
+        volumeSlider.setVisible(false);
+
+        volumeButton.setOnMouseEntered(e -> volumeSlider.setVisible(true));
+        volumeSlider.setOnMouseExited(e -> volumeSlider.setVisible(false));
+
+        // Video Progress Slider
+        Slider progressSlider = new Slider();
+        progressSlider.setMaxWidth(200);
+
+        // Update progress slider as video plays
+        mediaPlayer.currentTimeProperty().addListener((observable, oldTime, newTime) -> {
+            if (!progressSlider.isValueChanging()) {
+                progressSlider.setValue(newTime.toMillis() / mediaPlayer.getTotalDuration().toMillis() * 100);
+            }
+        });
+
+        // Allow seeking using the progress slider
+        progressSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (!isChanging) {
+                mediaPlayer.seek(mediaPlayer.getTotalDuration().multiply(progressSlider.getValue() / 100.0));
+            }
+        });
+
+        // Layout for controls
+        HBox controls = new HBox(5, playPauseButton, volumeButton, volumeSlider, progressSlider);
+        controls.setAlignment(javafx.geometry.Pos.CENTER);
+
+        // Organizing message content
+        VBox messageContent = new VBox(5);
+        messageContent.setSpacing(2);
+        messageContent.setMaxWidth(400);
+        messageContent.getChildren().addAll(mediaView, controls);
+
+        // Timestamp
+        Label timestampLabel = new Label(formatTimestamp(timestamp));
+        timestampLabel.setFont(new Font("Arial", 10.0));
+        timestampLabel.setTextFill(Color.GRAY);
+        messageContent.getChildren().add(timestampLabel);
+
+        if (isSender) {
+            messageBox.getChildren().add(0, messageContent);  // Add at the beginning if receiver
+        } else {
+            messageBox.getChildren().add(messageContent);  // Add at the end if sender
+        }
+
+        return messageBox;
+    }
+
+
+    private Pane createAttachmentMessagePane(User user, String fileUrl, String timestamp, boolean isSender) {
+        HBox messageBox = new HBox();
+        messageBox.setStyle("-fx-padding: 10");
+        messageBox.setFillHeight(true);
+        messageBox.setSpacing(10);
+        messageBox.setPrefWidth(Double.MAX_VALUE);
+        messageBox.setAlignment(isSender ? javafx.geometry.Pos.CENTER_RIGHT : javafx.geometry.Pos.CENTER_LEFT);
+        HBox.setHgrow(messageBox, Priority.ALWAYS);
+        
+        // Profile picture for the sender or receiver
+        Circle profilePic = new Circle(20.0);
+        Image profilePhoto = user.getProfilePicture();
+        Platform.runLater(() -> profilePic.setFill(new ImagePattern(profilePhoto)));
+                        
+        if (isSender) {
+            messageBox.getChildren().add(profilePic);
+        } else {
+            messageBox.getChildren().add(0, profilePic);
+        }
+
+        File cachedAttachment = null;
+
+        // Get the cached file path for the attachment
+        if (fileUrl != null && !fileUrl.isEmpty()) {
+            cachedAttachment = CacheHelper.getCachedAttachment(fileUrl);
+            if (cachedAttachment != null) {
+                System.out.println("Attachment loaded from cache: " + cachedAttachment.getName());
+            } else {
+                System.out.println("Attachment not found in cache: " + fileUrl);
+            }
+        }
+
+        // Display file name as clickable label
+        Label attachmentLabel = new Label(cachedAttachment != null ? cachedAttachment.getName() : "Download attachment");
+        attachmentLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14.0)); // Make text bold by default
+        attachmentLabel.setStyle(isSender ? "-fx-background-color: lightblue; -fx-padding: 8; -fx-background-radius: 10;" 
+                                        : "-fx-background-color: lightgray; -fx-padding: 8; -fx-background-radius: 10;");
+        attachmentLabel.setMaxWidth(400);
+
+        // Set underline effect on hover
+        attachmentLabel.setOnMouseEntered(event -> {
+            attachmentLabel.setUnderline(true);
+        });
+        attachmentLabel.setOnMouseExited(event -> {
+            attachmentLabel.setUnderline(false);
+        });
+
+        // Open the cached file in the default application when clicked
+        File finalCachedAttachment = cachedAttachment;  // To use inside lambda
+        attachmentLabel.setOnMouseClicked(_ -> {
+            if (finalCachedAttachment != null && Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().open(finalCachedAttachment);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Failed to open file: " + finalCachedAttachment.getName());
+                }
+            } else {
+                System.out.println("Desktop operations not supported, or file is missing.");
+            }
+        });
+
+        VBox messageContent = new VBox();
+        messageContent.setSpacing(2);
+        messageContent.setMaxWidth(400);
+        messageContent.getChildren().add(attachmentLabel);
+
+        Label timestampLabel = new Label(formatTimestamp(timestamp));
+        timestampLabel.setFont(new Font("Arial", 10.0));
+        timestampLabel.setTextFill(Color.GRAY);
+        messageContent.getChildren().add(timestampLabel);
+
+        if (isSender) {
+            messageBox.getChildren().add(0, messageContent);  // Add at the beginning if receiver
+        } else {
+            messageBox.getChildren().add(messageContent);  // Add at the end if sender
+        }
+
+        return messageBox;
+    }
+
+
+    
+    
+    public Pane createTextMessagePane(User messengerUser, String messageText, String timestamp, boolean isSender) {
         HBox messageBox = new HBox();
         messageBox.setStyle("-fx-padding: 10");
         messageBox.setFillHeight(true);

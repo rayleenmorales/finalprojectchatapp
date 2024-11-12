@@ -6,7 +6,7 @@ module com.guiyomi {
     requires firebase.admin;
     requires java.prefs;
     requires java.logging; 
-
+    requires transitive javafx.media;
     requires jdk.compiler;
     requires com.google.auth.oauth2;
     requires com.google.api.client;

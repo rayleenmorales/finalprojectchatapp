@@ -81,7 +81,6 @@ public class Firebase {
                     .header("Authorization", "Firebase " + tokenID)
                     .build();
             HttpResponse<String> storageRes = client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofString()).get();
-            System.out.println("Upload Profile Response: " + storageRes.statusCode());
 
             // Step 2: If upload is successful, retrieve the download token
             if (storageRes.statusCode() == 200) {
@@ -91,7 +90,6 @@ public class Firebase {
                 // Step 3: Construct and return the complete download URL
                 return storageURL + "o/profilePhotos%2F" + profilePhoto.getName() + "?alt=media&token=" + downloadToken;
             }
-            System.out.println(storageRes.body());
         } catch (ExecutionException | InterruptedException | FileNotFoundException err) {
             err.printStackTrace();
         }
@@ -167,15 +165,7 @@ public class Firebase {
                 if (databaseRes.statusCode() == 200) {
                     JsonObject databaseResultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
                     String username = databaseResultData.get("username").getAsString();
-                    
-                    // boolean isLogged = databaseResultData.has("isLogged") && databaseResultData.get("isLogged").getAsBoolean();
-    
-                    // if (isLogged) {
-                    //     System.out.println("User is already logged in from another device.");
-                    //     return null; // Prevent multiple login
-                    // }
-    
-                    // Return a new User instance with the session data
+                
                     return new User(idToken, localId, username);
                 
                 } else {
@@ -252,6 +242,36 @@ public class Firebase {
         return users;
     }
 
+    // Method to upload file to Firebase Storage
+    public static String uploadFile(String idToken, File file) {
+        String absolutePath = file.getAbsolutePath();
+        Path filePath = Paths.get(absolutePath);
+    
+        try {
+            // Step 1: Prepare and send the upload request to Firebase Storage
+            HttpRequest storageReq = HttpRequest.newBuilder()
+                .uri(URI.create(storageURL + "o?name=sentMedia/" + file.getName()))
+                .POST(HttpRequest.BodyPublishers.ofFile(filePath))
+                .header("Authorization", "Firebase " + idToken)
+                .build();
+            HttpResponse<String> storageRes = client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofString()).get();
+            System.out.println("Upload File Response: " + storageRes.statusCode());
+    
+            // Step 2: If upload is successful, retrieve the download token
+            if (storageRes.statusCode() == 200) {
+                JsonObject resultData = JsonParser.parseString(storageRes.body()).getAsJsonObject();
+                String downloadToken = resultData.get("downloadTokens").getAsString();
+                
+                String returnURL = storageURL + "o/" + file.getName() + "?alt=media&token=" + downloadToken;
+                // Step 3: Construct and return the complete download URL
+                return returnURL;
+            }
+        } catch (ExecutionException | InterruptedException | FileNotFoundException err) {
+            err.printStackTrace();
+        }
+        return "";
+    };
+
     public static ArrayList<JsonObject> getMessages(String idToken, String conversationID) {
         ArrayList<JsonObject> conversations = new ArrayList<>();
         System.out.println("Fetching messages for conversation ID: " + conversationID);
@@ -267,7 +287,6 @@ public class Firebase {
                 JsonObject resultData = JsonParser.parseString(response.body()).getAsJsonObject();
                 for (String key : resultData.keySet()) {
                     JsonObject messageData = resultData.getAsJsonObject(key);
-                    System.out.println("Retrieved message: " + messageData);  // Log each message retrieved
                     conversations.add(messageData);
                 }
             } else {

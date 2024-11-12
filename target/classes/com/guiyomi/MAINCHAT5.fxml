@@ -107,7 +107,7 @@
                            <graphic>
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
                            </graphic></Button>
-                        <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="35.0" styleClass="buttonBACK" HBox.hgrow="ALWAYS">
+                        <Button mnemonicParsing="false" onAction="#handleAttachmentButton" prefHeight="35.0" prefWidth="35.0" styleClass="buttonBACK" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>
@@ -199,9 +199,9 @@
                               <Insets bottom="5.0" left="10.0" top="5.0" />
                            </VBox.margin>
                         </Label>
-                           <ImageView fx:id="gameLogo" fitHeight="100.0" fitWidth="150.0" onMouseClicked="#handleGameLogoClick" pickOnBounds="true" preserveRatio="true"/>
+                           <ImageView fx:id="gameLogo" fitHeight="100.0" fitWidth="150.0" onMouseClicked="#handleGameLogoClick" pickOnBounds="true" preserveRatio="true" />
 
-                            <ImageView fx:id="secondGameLogo" fitHeight="100.0" fitWidth="150.0" onMouseClicked="#handleSecondGameLogoClick" pickOnBounds="true" preserveRatio="true"/>
+                            <ImageView fx:id="secondGameLogo" fitHeight="100.0" fitWidth="150.0" onMouseClicked="#handleSecondGameLogoClick" pickOnBounds="true" preserveRatio="true" />
                
                         <ScrollPane prefHeight="240.0" prefWidth="262.0" styleClass="hidden-scrollbars" VBox.vgrow="ALWAYS" />
                      </children>
