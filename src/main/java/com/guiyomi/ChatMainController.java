@@ -16,6 +16,7 @@ import java.awt.Desktop;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import com.google.gson.JsonObject;
+import com.guiyomi.TicTacToe.GameWindowTictac;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
@@ -138,9 +139,9 @@ public class ChatMainController {
 
         // Load the FlappyBord image with error handling
         try {
-            URL flappyLocation = getClass().getResource("/com/guiyomi/Images/FlappyBord.png");
+            URL flappyLocation = getClass().getResource("/com/guiyomi/Images/FlappyBirdie.png");
             if (flappyLocation == null) {
-                throw new IllegalArgumentException("Image not found: /com/guiyomi/Images/FlappyBord.png");
+                throw new IllegalArgumentException("Image not found: /com/guiyomi/Images/FlappyBirdie.png");
             }
             Image flappyImage = new Image(flappyLocation.toString());
             gameLogo.setImage(flappyImage);
@@ -151,15 +152,15 @@ public class ChatMainController {
 
         // Load the TICTAC image with error handling
         try {
-            URL ticTacLocation = getClass().getResource("/com/guiyomi/Images/TICTAC.png");
+            URL ticTacLocation = getClass().getResource("/com/guiyomi/Images/TICTACTOECOVER.png");
             if (ticTacLocation == null) {
-                throw new IllegalArgumentException("Image not found: /com/guiyomi/Images/TICTAC.png");
+                throw new IllegalArgumentException("Image not found: /com/guiyomi/Images/TICTACTOECOVER.png");
             }
             Image ticTacImage = new Image(ticTacLocation.toString());
-            secondGameLogo.setImage(ticTacImage); // Assume ticTacLogo is your ImageView for TICTAC.png
-            secondGameLogo.setFitWidth(100); // Set appropriate width
-            secondGameLogo.setFitHeight(100); // Set appropriate height
-            secondGameLogo.setPreserveRatio(true); // To maintain aspect ratio
+            // secondGameLogo.setImage(ticTacImage); // Assume ticTacLogo is your ImageView for TICTAC.png
+            // secondGameLogo.setFitWidth(100); // Set appropriate width
+            // secondGameLogo.setFitHeight(100); // Set appropriate height
+            // secondGameLogo.setPreserveRatio(true); // To maintain aspect ratio
 
             
         } catch (Exception e) {
@@ -336,12 +337,6 @@ public class ChatMainController {
         nameLabel.setLayoutY(10.0);
         nameLabel.setFont(javafx.scene.text.Font.font("Arial Rounded MT Bold", 16.0));
 
-        Label chatLabel = new Label("Chat: Lorem Ipsum");
-        chatLabel.setLayoutX(86.0);
-        chatLabel.setLayoutY(35.0);  
-        chatLabel.setPrefHeight(20.0);
-        chatLabel.setFont(new Font("Arial", 14.0));
-        chatLabel.setTextFill(Color.DARKGRAY);
 
         Label activeLabel = new Label(isLogged ? "Active" : "Offline");
         activeLabel.setLayoutX(86.0);
@@ -349,10 +344,10 @@ public class ChatMainController {
         activeLabel.setFont(javafx.scene.text.Font.font("Arial", 12.0));
         activeLabel.setTextFill(isLogged ? Color.GREEN : Color.GRAY);
 
-        userPane.getChildren().addAll(profilePic, nameLabel, chatLabel, activeLabel);
+        userPane.getChildren().addAll(profilePic, nameLabel, activeLabel);
         userPane.setUserData(userName);
 
-        userPane.setOnMouseClicked( _ -> selectUser(newUser));
+        userPane.setOnMouseClicked( event -> selectUser(newUser));
 
         return userPane;
     }
@@ -755,7 +750,7 @@ public class ChatMainController {
 
         // Open the cached file in the default application when clicked
         File finalCachedAttachment = cachedAttachment;  // To use inside lambda
-        attachmentLabel.setOnMouseClicked(_ -> {
+        attachmentLabel.setOnMouseClicked(event -> {
             if (finalCachedAttachment != null && Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().open(finalCachedAttachment);
@@ -849,7 +844,7 @@ public class ChatMainController {
     }
     
     private void setupSearchListener() {
-        searchField.textProperty().addListener((_, _, newValue) -> {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterUserList(newValue.trim().toLowerCase());
         });
     }
@@ -899,21 +894,39 @@ public class ChatMainController {
         }).start();
     }
 
-    @FXML  
-    private void handleSecondGameLogoClick() {
-        new Thread(() -> {
-                // Ensure that the Swing components are created on the Event Dispatch Thread
-                SwingUtilities.invokeLater(() -> {
-                    // Create an instance of the TicTacToe class
-                    TicTacToe ticTacToeGame = new TicTacToe();
-                    // Create a JFrame to hold the Tic Tac Toe game
-                    JFrame ticTacToeFrame = new JFrame("Tic Tac Toe");
-                    ticTacToeFrame.add(ticTacToeGame);
-                    ticTacToeFrame.setSize(420, 300); // Set the desired size for the frame
-                    ticTacToeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close
-                    ticTacToeFrame.setResizable(false); // Make it non-resizable
-                    ticTacToeFrame.setVisible(true); // Make the frame visible
-                });
-            }).start();
-    }
+    
+@FXML
+private void handleSecondGameLogoClick() {
+    new Thread(() -> {
+        try {
+            if (this.user == null) {
+                System.out.println("User is not initialized.");
+                return;
+            }
+            
+            if (selectedUser == null) {
+                System.out.println("Please select an opponent first.");
+                return;
+            }
+
+            // Ensure that the Swing components are created on the Event Dispatch Thread
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    // Initialize TicTacToe with the selected opponent
+                    TicTacToe ticTacToeGame = new TicTacToe(selectedUser);
+                    // Pass the TicTacToe game to a GameWindowTictac instance
+                    new GameWindowTictac(GameWindowTictac.WIDTH, GameWindowTictac.HEIGHT, 
+                                         "Tic Tac Toe with " + selectedUser.getUserName(), 
+                                         ticTacToeGame);
+                } catch (Exception e) {
+                    System.out.println("Error launching Tic Tac Toe game: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("An error occurred in handleSecondGameLogoClick: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }).start();
+}
 }

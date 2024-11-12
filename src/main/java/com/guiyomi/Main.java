@@ -36,11 +36,19 @@ public class Main extends Application {
     }
     
     private void loadMainChatScreen() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("MAINCHAT5.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MAINCHATNEW.fxml"));
         Parent root = loader.load();
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        
+        primaryStage.setScene(scene);
         primaryStage.setTitle("KaTalk - Chat");
-
+        
+        // Set the initial dimensions as minimum bounds to prevent minimizing by resizing
+        primaryStage.setOnShown(event -> {
+            primaryStage.setMinWidth(primaryStage.getWidth());
+            primaryStage.setMinHeight(primaryStage.getHeight());
+        });
+    
         // Pass Main instance and logged-in user to ChatMainController
         ChatMainController controller = loader.getController();
         System.out.println("Setting mainApp in ChatMainController");
@@ -53,6 +61,7 @@ public class Main extends Application {
         Parent root = loader.load();
         primaryStage.setTitle("KaTalk");
         primaryStage.setScene(new Scene(root));
+        primaryStage.centerOnScreen();
 
         // Get the controller and set the mainApp instance
         GetStartedController controller = loader.getController();

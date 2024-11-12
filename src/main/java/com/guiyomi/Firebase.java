@@ -2,7 +2,10 @@ package com.guiyomi;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -436,4 +439,45 @@ public class Firebase {
             }
     }
 
+   
+    public static void listenForGameUpdates(String conversationId, TicTacToe gamePanel) {
+        try {
+            String firebaseUrl = databaseURL + "/Tictactoe/" + conversationId + ".json";
+            @SuppressWarnings("deprecation")
+            URL url = new URL(firebaseUrl);
+            
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoOutput(true);
+    
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
+                JsonObject gameStateJson = JsonParser.parseReader(reader).getAsJsonObject();
+    
+                if (gameStateJson != null) {
+                    // Retrieve and update game state based on Firebase response
+                    JsonObject boardData = gameStateJson.getAsJsonObject("board");
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            int cellValue = boardData.get(i + "_" + j).getAsInt();
+                            gamePanel.board[i][j] = cellValue;
+                        }
+                    }
+    
+                    // Update the turn and winner info from Firebase
+                    String currentTurn = gameStateJson.get("currentTurn").getAsString();
+                    gamePanel.playerX = "X".equals(currentTurn);
+    
+                    // Redraw the board (you can trigger the repaint here)
+                    gamePanel.repaint();
+                }
+            } else {
+                System.err.println("Error fetching game state: " + connection.getResponseMessage());
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching game updates: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

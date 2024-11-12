@@ -3,6 +3,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -42,7 +43,6 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <TextField fx:id="passwordField" layoutX="36.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
             <Label layoutX="38.0" layoutY="234.0" text="PASSWORD">
                <font>
                   <Font name="System Bold" size="13.0" />
@@ -54,7 +54,6 @@
                </font>
             </Label>
             <TextField fx:id="lastNameField" layoutX="201.0" layoutY="98.0" prefHeight="39.0" prefWidth="157.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
-            <TextField fx:id="confirmPasswordField" layoutX="201.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" stylesheets="@stylesheet.css" />
             <Label layoutX="201.0" layoutY="234.0" text="RE-ENTER PASSWORD">
                <font>
                   <Font name="System Bold" size="13.0" />
@@ -75,6 +74,8 @@
                   <Font size="10.0" />
                </font>
             </Button>
+            <PasswordField fx:id="passwordField" layoutX="34.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" />
+            <PasswordField layoutX="201.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" />
          </children>
       </Pane>
    </children>

@@ -76,7 +76,7 @@ public class LoginPageController {
 
     private void navigateToMainChat(ActionEvent event, User user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("MAINCHAT5.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("MAINCHATNEW.fxml"));
             Parent chatMainParent = loader.load();
     
             // Pass User and Main instance to ChatMainController
@@ -91,6 +91,7 @@ public class LoginPageController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             mainApp.setLoggedInUser(user); // Set loggedInUser in mainApp for consistency
             stage.setScene(new Scene(chatMainParent));
+            stage.centerOnScreen();
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
