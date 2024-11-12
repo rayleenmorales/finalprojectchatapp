@@ -74,8 +74,8 @@
                   <Font size="10.0" />
                </font>
             </Button>
-            <PasswordField fx:id="passwordField" layoutX="34.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" />
-            <PasswordField layoutX="201.0" layoutY="253.0" prefHeight="39.0" prefWidth="158.0" styleClass="animatedTextField" />
+            <PasswordField fx:id="passwordField" layoutX="36.0" layoutY="260.0" styleClass="animatedTextField" />
+            <PasswordField fx:id="confirmPasswordField" layoutX="201.0" layoutY="260.0" styleClass="animatedTextField" />
          </children>
       </Pane>
    </children>
