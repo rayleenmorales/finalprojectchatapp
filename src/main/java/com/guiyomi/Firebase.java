@@ -262,7 +262,7 @@ public class Firebase {
                 JsonObject resultData = JsonParser.parseString(storageRes.body()).getAsJsonObject();
                 String downloadToken = resultData.get("downloadTokens").getAsString();
                 
-                String returnURL = storageURL + "o/" + file.getName() + "?alt=media&token=" + downloadToken;
+                String returnURL = storageURL + "o/sentMedia%2F" + file.getName() + "?alt=media&token=" + downloadToken;
                 // Step 3: Construct and return the complete download URL
                 return returnURL;
             }
