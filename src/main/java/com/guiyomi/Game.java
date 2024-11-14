@@ -335,21 +335,13 @@ class Game extends JPanel implements ActionListener {
     private TubeColumn tubeColumn; 
     private int currentScore; // Current score in the game
     private int highScore; // Highest score fetched from the database
-    private String idToken; // User's authentication token
-    private String userId;  // Unique user ID
     private User user;
 
 
         public Game(User user) {
             this.user = user; // Initialize user
-            if (user != null) {
-                this.idToken = user.getTokenID();
-                this.userId = user.getLocalID();
-            } else {
-                System.err.println("User is null, cannot fetch high score.");
-                this.idToken = ""; // Handle this appropriately
-                this.userId = ""; // Handle this appropriately
-            }
+            
+            
             proxyImage = new ProxyImage("/com/guiyomi/Images/Flappy/background.jpg");
             background = proxyImage.loadImage().getImage();
             setFocusable(true);

@@ -2,10 +2,7 @@ package com.guiyomi;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -346,6 +343,9 @@ public class Firebase {
         }
     }
 
+    // GAMES
+
+    // FLAPPY BIRD: Fetch the high score for a user from Firebase
     public static int fetchHighScore(String idToken, String localId) {
         int highScore = 0; // Default value if no high score is found
     
@@ -375,45 +375,116 @@ public class Firebase {
         return highScore;
     }
     
-    public void createGameSession(String gameId, String playerOneId, String playerTwoId, String idToken) {
-        JsonObject gameState = new JsonObject();
-        gameState.addProperty("playerOneId", playerOneId);
-        gameState.addProperty("playerTwoId", playerTwoId);
-        gameState.addProperty("currentTurn", playerOneId); // Set initial turn
-        gameState.add("board", new JsonObject()); // Initialize empty board
-        
-        // Send initial game state to Firebase
-        String path = "games/Tictactoe" + gameId + ".json?auth=" + idToken;
-        Firebase.putData(path, gameState); // You would need to create `putData` method to update Firebase.
-    }
-
-    public static void putData(String path, JsonObject data) {
+    // TIC TAC TOE: Checks if a game exists in Firebase
+    public static boolean doesGameExist(String gameId, String tokenId) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(databaseURL + path))
-                .PUT(HttpRequest.BodyPublishers.ofString(data.toString()))
-                .header("Content-Type", "application/json")
-                .build();
-            client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
-        } catch (Exception e) {
+                    .uri(URI.create(databaseURL + "games/Tictactoe/" + gameId + ".json?auth=" + tokenId))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+    
+            return response.statusCode() == 200 && !response.body().equals("null");
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return false;
         }
     }
-    
-    public static JsonObject getData(String path) {
+
+    // TIC TAC TOE: Load the game state from Firebase
+    public static JsonObject loadGameStateFromFirebase(String gameId, String authToken) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(databaseURL + path))
+                .uri(URI.create(databaseURL + "games/Tictactoe/" + gameId + ".json?auth=" + authToken))
                 .GET()
                 .build();
-            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
-            return JsonParser.parseString(response.body()).getAsJsonObject();
+    
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+            if (response.statusCode() == 200 && !response.body().equals("null")) {
+                JsonObject gameState = JsonParser.parseString(response.body()).getAsJsonObject();
+                return gameState;
+            } else {
+                System.out.println("No existing game state found in Firebase.");
+                return null;
+            }
+    
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+        }
+        return null;
+    }
+    
+    public static void initializeNewGameInFirebase(String gameId, String tokenId) {
+        try{
+            JsonObject gameState = new JsonObject();
+            JsonObject boardData = new JsonObject();
+
+            // Initialize an empty board
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    boardData.addProperty(i + "_" + j, 0); // Start with all cells empty
+                }
+            }
+
+            // Add all initial game state properties
+            gameState.add("board", boardData);
+            gameState.addProperty("currentTurn", "X"); // X starts the game
+            gameState.addProperty("gameDone", false);
+            gameState.addProperty("winner", -1);
+            gameState.addProperty("player1wins", 0);
+            gameState.addProperty("player2wins", 0);
+
+            String gameStateJson = gameState.toString();
+    
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(databaseURL + "games/Tictactoe/" + gameId + ".json?auth=" + tokenId))
+                .PUT(HttpRequest.BodyPublishers.ofString(gameStateJson))
+                .header("Content-Type", "application/json")
+                .build();
+    
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+            if (response.statusCode() == 200) {
+                System.out.println("New game initialized successfully.");
+            } else {
+                System.out.println("Failed to initialize new game: " + response.body());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    // Firebase method to send updated game state to Realtime Database
+    public static void sendUpdatedGameState(String gameId, JsonObject gameState, String authToken) {
+        String firebaseUrl = databaseURL + "/games/Tictactoe/" + gameId + ".json?auth=" + authToken;
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(firebaseUrl))
+                .PUT(HttpRequest.BodyPublishers.ofString(gameState.toString()))
+                .header("Content-Type", "application/json")
+                .build();
+
+            HttpClient client = HttpClient.newHttpClient();
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
+                if (response.statusCode() == 200) {
+                    System.out.println("Game state updated successfully.");
+                } else {
+                    System.err.println("Failed to update game state: " + response.statusCode());
+                }
+            }).exceptionally(e -> {
+                System.err.println("Error updating game state: " + e.getMessage());
+                return null;
+            });
+        } catch (Exception e) {
+            System.err.println("Exception in sendUpdatedGameState: " + e.getMessage());
+        }
+    }
+
+
+    // FLAPPY BIRD: Save the high score for a user to Firebase
     public static void saveHighScore (String idToken, String localId, int highscoreValue) throws FirebaseAuthException {
         try {
             JsonObject highscoreData = new JsonObject();
@@ -437,47 +508,5 @@ public class Firebase {
                 err.printStackTrace();
                 throw new FirebaseAuthException("Error updating highscore"); // Or handle the error differently
             }
-    }
-
-   
-    public static void listenForGameUpdates(String conversationId, TicTacToe gamePanel) {
-        try {
-            String firebaseUrl = databaseURL + "/Tictactoe/" + conversationId + ".json";
-            @SuppressWarnings("deprecation")
-            URL url = new URL(firebaseUrl);
-            
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setDoOutput(true);
-    
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-                JsonObject gameStateJson = JsonParser.parseReader(reader).getAsJsonObject();
-    
-                if (gameStateJson != null) {
-                    // Retrieve and update game state based on Firebase response
-                    JsonObject boardData = gameStateJson.getAsJsonObject("board");
-                    for (int i = 0; i < 3; i++) {
-                        for (int j = 0; j < 3; j++) {
-                            int cellValue = boardData.get(i + "_" + j).getAsInt();
-                            gamePanel.board[i][j] = cellValue;
-                        }
-                    }
-    
-                    // Update the turn and winner info from Firebase
-                    String currentTurn = gameStateJson.get("currentTurn").getAsString();
-                    gamePanel.playerX = "X".equals(currentTurn);
-    
-                    // Redraw the board (you can trigger the repaint here)
-                    gamePanel.repaint();
-                }
-            } else {
-                System.err.println("Error fetching game state: " + connection.getResponseMessage());
-            }
-        } catch (Exception e) {
-            System.err.println("Error fetching game updates: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 }

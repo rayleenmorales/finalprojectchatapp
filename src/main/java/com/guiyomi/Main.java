@@ -44,7 +44,7 @@ public class Main extends Application {
         primaryStage.setTitle("KaTalk - Chat");
         
         // Set the initial dimensions as minimum bounds to prevent minimizing by resizing
-        primaryStage.setOnShown(event -> {
+        primaryStage.setOnShown(_ -> {
             primaryStage.setMinWidth(primaryStage.getWidth());
             primaryStage.setMinHeight(primaryStage.getHeight());
         });
@@ -61,6 +61,7 @@ public class Main extends Application {
         Parent root = loader.load();
         primaryStage.setTitle("KaTalk");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setResizable(false);
         primaryStage.centerOnScreen();
 
         // Get the controller and set the mainApp instance

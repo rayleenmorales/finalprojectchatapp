@@ -1,6 +1,5 @@
 package com.guiyomi;
 
-import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -13,10 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.Desktop;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import com.google.gson.JsonObject;
-import com.guiyomi.TicTacToe.GameWindowTictac;
+import com.guiyomi.Game2.GameWindowTictac;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
@@ -137,36 +135,6 @@ public class ChatMainController {
         chatMainScene.setId("chatMainScene");
         setupSearchListener();
 
-        // Load the FlappyBord image with error handling
-        try {
-            URL flappyLocation = getClass().getResource("/com/guiyomi/Images/FlappyBirdie.png");
-            if (flappyLocation == null) {
-                throw new IllegalArgumentException("Image not found: /com/guiyomi/Images/FlappyBirdie.png");
-            }
-            Image flappyImage = new Image(flappyLocation.toString());
-            gameLogo.setImage(flappyImage);
-            
-        } catch (Exception e) {
-            e.printStackTrace(); // Handle the exception appropriately
-        }
-
-        // Load the TICTAC image with error handling
-        try {
-            URL ticTacLocation = getClass().getResource("/com/guiyomi/Images/TICTACTOECOVER.png");
-            if (ticTacLocation == null) {
-                throw new IllegalArgumentException("Image not found: /com/guiyomi/Images/TICTACTOECOVER.png");
-            }
-            Image ticTacImage = new Image(ticTacLocation.toString());
-            // secondGameLogo.setImage(ticTacImage); // Assume ticTacLogo is your ImageView for TICTAC.png
-            // secondGameLogo.setFitWidth(100); // Set appropriate width
-            // secondGameLogo.setFitHeight(100); // Set appropriate height
-            // secondGameLogo.setPreserveRatio(true); // To maintain aspect ratio
-
-            
-        } catch (Exception e) {
-            e.printStackTrace(); // Handle the exception appropriately
-        }
-
         messageField.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case ENTER:
@@ -185,7 +153,6 @@ public class ChatMainController {
     // Method to set the Main instance for access to logout functionality
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
-        System.out.println("mainApp set in ChatMainController: " + mainApp);
     }
 
     public void setUser(User user) {
@@ -215,7 +182,6 @@ public class ChatMainController {
         alert.setContentText("Are you sure you want to log out?");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
-            System.out.println("Checking if mainApp is null: " + this.mainApp);
             if (this.mainApp != null) {
                 System.out.println("Logging out user: " + user.getUserName());
                 stopAllUpdates(); // Stop both user list and message updates
@@ -340,14 +306,14 @@ public class ChatMainController {
 
         Label activeLabel = new Label(isLogged ? "Active" : "Offline");
         activeLabel.setLayoutX(86.0);
-        activeLabel.setLayoutY(55.0);
+        activeLabel.setLayoutY(30.0);
         activeLabel.setFont(javafx.scene.text.Font.font("Arial", 12.0));
         activeLabel.setTextFill(isLogged ? Color.GREEN : Color.GRAY);
 
         userPane.getChildren().addAll(profilePic, nameLabel, activeLabel);
         userPane.setUserData(userName);
 
-        userPane.setOnMouseClicked( event -> selectUser(newUser));
+        userPane.setOnMouseClicked( _ -> selectUser(newUser));
 
         return userPane;
     }
@@ -505,10 +471,8 @@ public class ChatMainController {
     
                 Pane messagePane;
                 if (isMediaMessage(content)) { // Check if the content is a media URL
-                    System.out.println("Creating media message pane for: " + content);
                     messagePane = createMediaMessagePane(messageUser, content, timestamp, isSender);
                 } else {
-                    System.out.println("Creating text message pane for: " + content);
                     messagePane = createTextMessagePane(messageUser, content, timestamp, isSender);
                 }
     
@@ -544,13 +508,10 @@ public class ChatMainController {
         String path = mediaUrl.split("\\?")[0].toLowerCase();
     
         if (path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".gif")) {
-            System.out.println("Creating image message pane for: " + mediaUrl);
             return createImageMessagePane(user, mediaUrl, timestamp, isSender);
         } else if (path.endsWith(".mp4") || path.endsWith(".avi")) {
-            System.out.println("Creating video message pane for: " + mediaUrl);
             return createVideoMessagePane(user, mediaUrl, timestamp, isSender);
         } else {
-            System.out.println("Creating attachment message pane for: " + mediaUrl);
             return createAttachmentMessagePane(user, mediaUrl, timestamp, isSender);
         }
     }
@@ -638,7 +599,7 @@ public class ChatMainController {
 
         // Toggle Play/Pause Button
         Button playPauseButton = new Button("Play");
-        playPauseButton.setOnAction(e -> {
+        playPauseButton.setOnAction(_ -> {
             if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
                 mediaPlayer.pause();
                 playPauseButton.setText("Play");
@@ -652,25 +613,25 @@ public class ChatMainController {
         Button volumeButton = new Button("🔊");
         Slider volumeSlider = new Slider(0, 1, 0.5); // Ranges from 0 (mute) to 1 (full volume)
         volumeSlider.setOrientation(Orientation.VERTICAL);
-        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> mediaPlayer.setVolume(newValue.doubleValue()));
+        volumeSlider.valueProperty().addListener((_, _, newValue) -> mediaPlayer.setVolume(newValue.doubleValue()));
         volumeSlider.setVisible(false);
 
-        volumeButton.setOnMouseEntered(e -> volumeSlider.setVisible(true));
-        volumeSlider.setOnMouseExited(e -> volumeSlider.setVisible(false));
+        volumeButton.setOnMouseEntered(_ -> volumeSlider.setVisible(true));
+        volumeSlider.setOnMouseExited(_ -> volumeSlider.setVisible(false));
 
         // Video Progress Slider
         Slider progressSlider = new Slider();
         progressSlider.setMaxWidth(200);
 
         // Update progress slider as video plays
-        mediaPlayer.currentTimeProperty().addListener((observable, oldTime, newTime) -> {
+        mediaPlayer.currentTimeProperty().addListener((_, _, newTime) -> {
             if (!progressSlider.isValueChanging()) {
                 progressSlider.setValue(newTime.toMillis() / mediaPlayer.getTotalDuration().toMillis() * 100);
             }
         });
 
         // Allow seeking using the progress slider
-        progressSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+        progressSlider.valueChangingProperty().addListener((_, _, isChanging) -> {
             if (!isChanging) {
                 mediaPlayer.seek(mediaPlayer.getTotalDuration().multiply(progressSlider.getValue() / 100.0));
             }
@@ -727,11 +688,6 @@ public class ChatMainController {
         // Get the cached file path for the attachment
         if (fileUrl != null && !fileUrl.isEmpty()) {
             cachedAttachment = CacheHelper.getCachedAttachment(fileUrl);
-            if (cachedAttachment != null) {
-                System.out.println("Attachment loaded from cache: " + cachedAttachment.getName());
-            } else {
-                System.out.println("Attachment not found in cache: " + fileUrl);
-            }
         }
 
         // Display file name as clickable label
@@ -742,16 +698,16 @@ public class ChatMainController {
         attachmentLabel.setMaxWidth(400);
 
         // Set underline effect on hover
-        attachmentLabel.setOnMouseEntered(event -> {
+        attachmentLabel.setOnMouseEntered(_ -> {
             attachmentLabel.setUnderline(true);
         });
-        attachmentLabel.setOnMouseExited(event -> {
+        attachmentLabel.setOnMouseExited(_ -> {
             attachmentLabel.setUnderline(false);
         });
 
         // Open the cached file in the default application when clicked
         File finalCachedAttachment = cachedAttachment;  // To use inside lambda
-        attachmentLabel.setOnMouseClicked(event -> {
+        attachmentLabel.setOnMouseClicked(_ -> {
             if (finalCachedAttachment != null && Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().open(finalCachedAttachment);
@@ -845,7 +801,7 @@ public class ChatMainController {
     }
     
     private void setupSearchListener() {
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        searchField.textProperty().addListener((_, _, newValue) -> {
             filterUserList(newValue.trim().toLowerCase());
         });
     }
@@ -863,14 +819,12 @@ public class ChatMainController {
 
     private String getCurrentConversationId() {
         if (user == null || selectedUser == null) {
-            System.out.println("Cannot generate conversation ID, user or selectedUser is null.");
-            return "";  // Alternatively, handle this more robustly based on your application needs
+            return ""; // Return empty string if user or selectedUser is null
         }
     
         String userId1 = user.getLocalID();
         String userId2 = selectedUser.getLocalID();
         String conversationId = (userId1.compareTo(userId2) < 0) ? userId1 + "_" + userId2 : userId2 + "_" + userId1;
-        System.out.println("Generated conversation ID: " + conversationId);
         return conversationId;
     }
 
@@ -914,7 +868,7 @@ private void handleSecondGameLogoClick() {
             SwingUtilities.invokeLater(() -> {
                 try {
                     // Initialize TicTacToe with the selected opponent
-                    TicTacToe ticTacToeGame = new TicTacToe(selectedUser);
+                    Game2 ticTacToeGame = new Game2(user, selectedUser);
                     // Pass the TicTacToe game to a GameWindowTictac instance
                     new GameWindowTictac(GameWindowTictac.WIDTH, GameWindowTictac.HEIGHT, 
                                          "Tic Tac Toe with " + selectedUser.getUserName(), 
