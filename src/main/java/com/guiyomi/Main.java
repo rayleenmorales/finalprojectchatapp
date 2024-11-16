@@ -20,8 +20,9 @@ public class Main extends Application {
             String tokenID = SessionManager.getTokenID();
             String localID = SessionManager.getLocalID();
             String userName = SessionManager.getUserName();
+            String profileURL = SessionManager.getProfilePhotoURL();
             if (tokenID != null && localID != null && userName != null) {
-                loggedInUser = new User(tokenID, localID, userName);
+                loggedInUser = new User(tokenID, localID, userName, profileURL);
                 loadMainChatScreen();
             } else {
                 loadGetStartedScreen();

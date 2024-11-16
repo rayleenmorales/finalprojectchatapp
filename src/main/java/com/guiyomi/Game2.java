@@ -1,23 +1,30 @@
 package com.guiyomi;
 
-import java.awt.Dimension;
 import java.awt.Color;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.google.gson.JsonObject;
+import javafx.animation.AnimationTimer; // JavaFX for AnimationTimer
 
-import javafx.animation.AnimationTimer;
+// Ensure that classes like User and Firebase are properly imported or defined
+// import com.guiyomi.User;       // Custom User class, if applicable
+// import com.guiyomi.Firebase;   // Custom Firebase class, if applicable
 
-import javax.swing.ImageIcon;
-import java.io.*;
-import java.util.Scanner;
 
 public class Game2 extends JPanel implements ActionListener {
 

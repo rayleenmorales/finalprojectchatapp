@@ -155,7 +155,7 @@ public class Firebase {
                 String idToken = resultData.get("idToken").getAsString();
                 String localId = resultData.get("localId").getAsString();
                 
-                // Get the username from the database
+                // Get the username and profile url from the database
                 // Check the isLogged status from the database
                 HttpRequest databaseReq = HttpRequest.newBuilder()
                         .uri(URI.create(databaseURL + "users/" + localId + ".json?auth=" + idToken))
@@ -165,8 +165,11 @@ public class Firebase {
                 if (databaseRes.statusCode() == 200) {
                     JsonObject databaseResultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
                     String username = databaseResultData.get("username").getAsString();
-                
-                    return new User(idToken, localId, username);
+                    String profileURL = databaseResultData.get("profilePhotoURL").getAsString();
+
+                    System.out.println("User profile url when signing in: " + profileURL);
+                    return new User(idToken, localId, username, profileURL);
+                    
                 
                 } else {
                     System.out.println("Failed to get user data from database.");
@@ -485,10 +488,15 @@ public class Firebase {
 
 
     // FLAPPY BIRD: Save the high score for a user to Firebase
-    public static void saveHighScore (String idToken, String localId, int highscoreValue) throws FirebaseAuthException {
+    public static void saveHighScore (String idToken, String localId, String username, String profileURL, int highscoreValue) throws FirebaseAuthException {
         try {
             JsonObject highscoreData = new JsonObject();
+            highscoreData.addProperty("userId", localId);
             highscoreData.addProperty("highscore", highscoreValue);
+            highscoreData.addProperty("username", username);
+            highscoreData.addProperty("profileURL", profileURL);
+
+            System.out.println("profileURL when sending to firebase: " + profileURL);
         
             HttpRequest putRequest = HttpRequest.newBuilder()
                 .uri(URI.create(databaseURL + "games/flappybird/highscores/" + localId + ".json?auth=" + idToken))
@@ -508,5 +516,33 @@ public class Firebase {
                 err.printStackTrace();
                 throw new FirebaseAuthException("Error updating highscore"); // Or handle the error differently
             }
+    }
+
+    // FLAPPY BIRD: Fetch the high scores for all users from Firebase
+    public static ArrayList<JsonObject> fetchAllHighScores(String idToken) {
+        ArrayList<JsonObject> highScores = new ArrayList<>();
+    
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(databaseURL + "games/flappybird/highscores.json?auth=" + idToken))
+                .GET()
+                .build();
+    
+            HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+    
+            if (response.statusCode() == 200 && !response.body().equals("null")) {
+                JsonObject resultData = JsonParser.parseString(response.body()).getAsJsonObject();
+                for (String key : resultData.keySet()) {
+                    JsonObject highScoreData = resultData.getAsJsonObject(key);
+                    highScores.add(highScoreData);
+                }
+            } else {
+                System.out.println("No high scores found in Firebase.");
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    
+        return highScores;
     }
 }

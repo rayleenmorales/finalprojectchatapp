@@ -18,6 +18,13 @@ public class User {
         this.tokenID = tokenID;
         this.localID = localID;
     }
+    
+    public User(String tokenID, String localID, String userName, String profileURL) {
+        this.userName = userName;
+        this.tokenID = tokenID;
+        this.localID = localID;
+        this.profilePhotoURL = profileURL;
+    }
 
     public User(String username, String profileURL, boolean isLogged, String userID) {
         this.userName = username;

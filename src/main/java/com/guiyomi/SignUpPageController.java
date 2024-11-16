@@ -102,7 +102,7 @@ public class SignUpPageController {
                     Firebase.updateUserInfo(newUser.getLocalID(), newUser.getTokenID(), profilePhotoURL, profilePhoto.getName());
 
                     // Save session data locally for the logged-in user
-                    SessionManager.saveSession(newUser.getTokenID(), newUser.getLocalID(), userName);
+                    SessionManager.saveSession(newUser.getTokenID(), newUser.getLocalID(), userName, profilePhotoURL);
 
                     // Cache the profile picture locally
                     newUser.setProfilePhotoURL(profilePhotoURL); // Assuming setProfilePhotoURL method is in User
@@ -121,7 +121,7 @@ public class SignUpPageController {
 
     public void startSession(User user) {
         // Save session data with SessionManager
-        SessionManager.saveSession(user.getTokenID(), user.getLocalID(), user.getUserName());
+        SessionManager.saveSession(user.getTokenID(), user.getLocalID(), user.getUserName(), user.getProfilePhotoURL());
         System.out.println("Session saved for user: " + user.getUserName());
         System.out.println("Session started for user: " + user.getUserName());
     }

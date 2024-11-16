@@ -59,8 +59,7 @@ public class LoginPageController {
                     System.out.println("Local ID: " + user.getLocalID());
 
                     // Start session and save user data
-                    SessionManager.saveSession(user.getTokenID(), user.getLocalID(), user.getUserName());
-    
+                    SessionManager.saveSession(user.getTokenID(), user.getLocalID(), user.getUserName(), user.getProfilePhotoURL());
                     // Update user status to logged in and navigate to main chat
                     Firebase.updateIsLogged(user.getLocalID(), user.getTokenID(), true);
                     Platform.runLater(() -> navigateToMainChat(event, user));

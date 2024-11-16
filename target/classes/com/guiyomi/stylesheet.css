@@ -79,7 +79,22 @@
 -fx-opacity: 0;         /* Keeps scrollbar hidden on hover */
 }
 
-
+/* SCORLLBAR */
+.Transparent-hidden-scrollbars .scroll-bar {
+  -fx-background-color: transparent;
+  -fx-opacity: 0;         /* Hides the scrollbar */
+  -fx-pref-width: 0;      /* Ensures minimal width for hidden scrollbar */
+  -fx-pref-height: 0;     /* Ensures minimal height for hidden scrollbar */
+  }
+  
+  .Transparent-hidden-scrollbars:focused {
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  }
+  
+  .Transparent-hidden-scrollbars .scroll-bar:hover {
+  -fx-opacity: 0;         /* Keeps scrollbar hidden on hover */
+  }
 
 /* BUTTONS */
 
@@ -152,6 +167,43 @@
 
 @media (min-width: 768px) {
   .buttonWELCOME {
+    -fx-min-width: 120px;
+    -fx-padding: 0 25px;
+  }
+}
+
+
+.buttonSTART {
+  -fx-font-family: 'BigNoodleTitling';
+  -fx-background-color: #8f7736;
+  -fx-border-color: #6b4d1d;
+  -fx-border-width: 3px;
+  -fx-border-radius: 30px;
+  -fx-background-radius: 30px;
+  -fx-text-fill: #ffffff;
+  font-weight: 600;
+  -fx-font-weight: 600;
+  -fx-font-size: 30px;
+  -fx-padding: 0 18px;
+  -fx-min-height: 50px;
+  -fx-alignment: center;
+  -fx-box-shadow: rgb(0, 0, 0) 4px 4px 0 0;
+  -fx-cursor: hand;
+}
+
+.buttonSTART:hover {
+  -fx-background-color: #ffffff;
+  -fx-text-fill: #7d672c;
+}
+
+.buttonSTART:active {
+  -fx-effect: dropshadow(one-pass-box, rgb(173, 135, 45), 2, 2, 0, 0);
+  -fx-translate-x: 2px;
+  -fx-translate-y: 2px;
+}
+
+@media (min-width: 768px) {
+  .buttonSTART {
     -fx-min-width: 120px;
     -fx-padding: 0 25px;
   }

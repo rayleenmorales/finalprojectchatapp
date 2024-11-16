@@ -1,12 +1,33 @@
 package com.guiyomi;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+// AWT Imports
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.ImageObserver;
+
+// Swing Imports
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+// Utility Imports
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+// Custom Classes
+import com.guiyomi.ProxyImage;
+import com.guiyomi.RealImage;
 
 // Bird class is used to create a bird object in the game and to move it around the screen
 class Bird extends GameObject {
@@ -327,7 +348,7 @@ class Tube extends GameObject {
 }
 
 // this class is used to create the background for the game 
-class Game extends JPanel implements ActionListener {
+public class Game extends JPanel implements ActionListener {
     private boolean isRunning = false; 
     private ProxyImage proxyImage; 
     private Image background; 
@@ -365,7 +386,8 @@ class Game extends JPanel implements ActionListener {
         public void updateHighScore() throws FirebaseAuthException {
             if (currentScore > highScore) {
                 highScore = currentScore;
-                Firebase.saveHighScore(user.getTokenID(), user.getLocalID(), highScore);
+                System.out.println("getting profile photo url before saving high score: " + user.getProfilePhotoURL());
+                Firebase.saveHighScore(user.getTokenID(), user.getLocalID(), user.getUserName(), user.getProfilePhotoURL(), highScore);
                 System.out.println("New high score set: " + highScore);
             }
         }
@@ -479,6 +501,7 @@ class Game extends JPanel implements ActionListener {
         }
     }
 }
+
 
 class GameWindow {
     public static int WIDTH = 900; // Set the width of the window

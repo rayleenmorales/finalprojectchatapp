@@ -19,7 +19,10 @@ import com.guiyomi.Game2.GameWindowTictac;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -44,6 +47,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.application.Platform;
 
 public class ChatMainController {
@@ -94,10 +99,6 @@ public class ChatMainController {
 
     @FXML
     private Circle selectedUserProfile;
-
-
-    @FXML
-    private Label currentUserLabel;
 
 
     @FXML
@@ -157,6 +158,7 @@ public class ChatMainController {
 
     public void setUser(User user) {
         this.user = user;
+        System.out.println("Setting user in chat main: " + user.getProfilePhotoURL());
         initializeUserProfile();
         startUserUpdateLoop();
     }
@@ -166,7 +168,6 @@ public class ChatMainController {
             try {
                 Image profilePhoto = user.getProfilePicture();
                 currentUserProfile.setFill(new ImagePattern(profilePhoto));
-                currentUserLabel.setText(user.getUserName());
             } catch (Exception e) {
                 System.out.println("Error loading profile photo: " + e.getMessage());
             }
@@ -269,7 +270,6 @@ public class ChatMainController {
         Platform.runLater(() -> {
             userContainer.getChildren().clear();
             messageContainer.getChildren().clear();
-            currentUserLabel.setText("");
             selectedUserLabel.setText("");
             selectedUserSideLabel.setText("");
             selectedUserProfile.setFill(Color.TRANSPARENT);
@@ -829,7 +829,7 @@ public class ChatMainController {
     }
 
     // FOR GAMES
-    @FXML
+   @FXML
     private void handleGameLogoClick() {
         new Thread(() -> {
             try {
@@ -838,50 +838,66 @@ public class ChatMainController {
                     return;
                 }
 
-                // Ensure that the Swing components are created on the Event Dispatch Thread
-                SwingUtilities.invokeLater(() -> {
-                    Game game = new Game(this.user); // Pass the User object
-                    new GameWindow(GameWindow.WIDTH, GameWindow.HEIGHT, "Flappy Bird", game);
+                // Open the leaderboard window
+                Platform.runLater(() -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("LeaderBoards.fxml"));
+                        Parent leaderboardRoot = loader.load();
+
+                        // Set the controller and pass the user to it
+                        FlappyLeaderbirdController controller = loader.getController();
+                        controller.setUser(this.user);
+                        System.out.println("Profile Url when setting user in flappy bird controller: " + this.user.getProfilePhotoURL());
+
+                        // Create and show the leaderboard window
+                        Stage leaderboardStage = new Stage();
+                        leaderboardStage.setTitle("Leaderboard - Flappy Bird");
+                        leaderboardStage.setScene(new Scene(leaderboardRoot));
+                        leaderboardStage.initModality(Modality.NONE);
+                        leaderboardStage.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
             } catch (Exception e) {
-                e.printStackTrace(); // Log the error
+                e.printStackTrace();
             }
         }).start();
     }
 
     
-@FXML
-private void handleSecondGameLogoClick() {
-    new Thread(() -> {
-        try {
-            if (this.user == null) {
-                System.out.println("User is not initialized.");
-                return;
-            }
-            
-            if (selectedUser == null) {
-                System.out.println("Please select an opponent first.");
-                return;
-            }
-
-            // Ensure that the Swing components are created on the Event Dispatch Thread
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    // Initialize TicTacToe with the selected opponent
-                    Game2 ticTacToeGame = new Game2(user, selectedUser);
-                    // Pass the TicTacToe game to a GameWindowTictac instance
-                    new GameWindowTictac(GameWindowTictac.WIDTH, GameWindowTictac.HEIGHT, 
-                                         "Tic Tac Toe with " + selectedUser.getUserName(), 
-                                         ticTacToeGame);
-                } catch (Exception e) {
-                    System.out.println("Error launching Tic Tac Toe game: " + e.getMessage());
-                    e.printStackTrace();
+    @FXML
+    private void handleSecondGameLogoClick() {
+        new Thread(() -> {
+            try {
+                if (this.user == null) {
+                    System.out.println("User is not initialized.");
+                    return;
                 }
-            });
-        } catch (Exception e) {
-            System.out.println("An error occurred in handleSecondGameLogoClick: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }).start();
-}
+                
+                if (selectedUser == null) {
+                    System.out.println("Please select an opponent first.");
+                    return;
+                }
+
+                // Ensure that the Swing components are created on the Event Dispatch Thread
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        // Initialize TicTacToe with the selected opponent
+                        Game2 ticTacToeGame = new Game2(user, selectedUser);
+                        // Pass the TicTacToe game to a GameWindowTictac instance
+                        new GameWindowTictac(GameWindowTictac.WIDTH, GameWindowTictac.HEIGHT, 
+                                            "Tic Tac Toe with " + selectedUser.getUserName(), 
+                                            ticTacToeGame);
+                    } catch (Exception e) {
+                        System.out.println("Error launching Tic Tac Toe game: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                System.out.println("An error occurred in handleSecondGameLogoClick: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
+    }
 }
